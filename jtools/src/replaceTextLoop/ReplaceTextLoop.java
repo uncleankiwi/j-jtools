@@ -94,18 +94,35 @@ public class ReplaceTextLoop {
 		//if RIGHT also not found, add N, LEFT to dictionary
 		//print subCount, alreadySubbedCount
 		String replaceString = "";
-		String searchString = "";
+		String currentLine = null;
 		try {
-			try(Scanner sourceScanner = new Scanner(sourceFile);
-					Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
-					Scanner searchLinesScanner = new Scanner(searchLinesFile);
+			try(Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
+				Scanner searchLinesScanner = new Scanner(searchLinesFile);
 				PrintWriter output = new PrintWriter(outFile);){
 								
 				System.out.println("Beginning replacement...");
 				
 				while (searchLinesScanner.hasNext()) {
-					searchString = searchLinesScanner.nextLine();
+					Pattern searchString = Pattern.compile(searchLinesScanner.nextLine());
 					replaceString = replaceLinesScanner.nextLine();
+					
+					
+					try (Scanner sourceScanner = new Scanner(sourceFile);){
+						Matcher matcher = searchString.matcher(currentLine);
+						while (sourceScanner.hasNext()) {
+							currentLine = sourceScanner.nextLine();
+							if (currentLine) {
+								
+							}
+							
+						}
+					}
+					
+
+
+
+					System.out.println(searchString);
+					System.out.println(replaceString);
 					
 				}
 				
@@ -125,7 +142,6 @@ public class ReplaceTextLoop {
 		
 		
 	
-		Pattern pattern = Pattern.compile("lang\\(\"[^\"]+");
 	}
 
 }
