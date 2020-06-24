@@ -35,14 +35,10 @@ public class ReplaceTextLoop {
 		int searchLinesRows = 0;
 		int replaceLinesRows = 0;
 		
-		int subCount = 0;	//lines replaced
-		int alreadySubbedCount = 0; //lines already replaced
-		
 		//opening files, checking
 		try {
 			Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
 			Scanner searchLinesScanner = new Scanner(searchLinesFile);
-			Scanner sourceScanner = new Scanner(sourceFile);
 			
 			//if number of lines in files don't match, stop	
 			System.out.println("Checking files...");
@@ -65,32 +61,81 @@ public class ReplaceTextLoop {
 			}
 			System.out.println("Files checked.");
 			
+			
 			//for every line N in LEFT:
 			//if LEFT found in ORIGINAL, substitute with RIGHT, subCount++
 			//if LEFT not found, search for RIGHT, alreadySubbedCount++
 			//if RIGHT also not found, add N, LEFT to dictionary
 			//print subCount, alreadySubbedCount
-			PrintWriter output = new PrintWriter(outFile);
-			
 			System.out.println("Beginning replacement...");
-			String replaceString = "";
+			PrintWriter output = new PrintWriter(outFile);
+			int subCount = 0;	//lines replaced
+			int alreadySubbedCount = 0; //lines already replaced
 			String currentLine = null;
+			Scanner sourceScanner = new Scanner(sourceFile);
 
-			while (sourceScanner.hasNext()) {
-				currentLine = sourceScanner.nextLine();
-			}
+			searchLinesScanner.close();
+			replaceLinesScanner.close();
+			searchLinesScanner = new Scanner(searchLinesFile);
+			replaceLinesScanner = new Scanner(replaceLinesFile);
 			while (searchLinesScanner.hasNext()) {
-				Pattern searchString = Pattern.compile(searchLinesScanner.nextLine());
-				replaceString = replaceLinesScanner.nextLine();
-				Matcher matcher = searchString.matcher(currentLine);
+				String searchString = searchLinesScanner.nextLine();
+				String replaceString = replaceLinesScanner.nextLine();
+				Pattern pattern = Pattern.compile(searchString);
+								
+				boolean found = false;
+				sourceScanner = new Scanner(sourceFile);
+				while (sourceScanner.hasNext() && !found) {
+					currentLine = sourceScanner.nextLine();
+					Matcher matcher = pattern.matcher(currentLine);
+					
+					if (matcher.find()) {
+						found = true;
+						System.out.println("Found match for: " + matcher.group());
+						System.out.println("in the line: " + currentLine);
+						
+						//TODO replace text
+						
+					subCount++;
+					}
+				}
+				sourceScanner.close();
+				
+				//check if already replaced
+				if (!found) {					
+					sourceScanner = new Scanner(sourceFile);
+					pattern = Pattern.compile(replaceString);
+					while (sourceScanner.hasNext() && !found) {
+						currentLine = sourceScanner.nextLine();
+						Matcher matcher = pattern.matcher(currentLine);
+						
+						if (matcher.find()) {
+							found = true;
+							alreadySubbedCount++;
+							//System.out.println("Already replaced with: " + matcher.group());
+							//System.out.println("in the line: " + currentLine);
+						}
+						
+					}
 
+				}
+				
+				//no match, also not already replaced
+				if (!found) {
+					System.out.println("Match not found for: " + searchString);
+				}
+				
+				
+				
 			}
-				System.out.println("Replaced.");
+				System.out.println("Replaced: " + subCount + " Already replaced: " + alreadySubbedCount);
 
 			
 
-
-				
+			sourceScanner.close();
+			replaceLinesScanner.close();
+			searchLinesScanner.close();
+			output.close();
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -101,16 +146,3 @@ public class ReplaceTextLoop {
 
 }
 
-
-
-//
-//System.out.println("Enter source file to be opened:");
-//System.out.println("ソースコードを指定してくだされ（出力ファイルは新しくセーブされるけどバックアップを取ってくだされ）");
-//
-//System.out.println("Enter file with lines to be replaced: ");
-//System.out.println("差し替えられるテキストくれー");
-//
-//System.out.println("Enter file with line for replacing: ");
-//System.out.println("差し替えテキスト:");
-//
-//System.out.println("");
