@@ -40,107 +40,62 @@ public class ReplaceTextLoop {
 		
 		//opening files, checking
 		try {
-			try(Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
-				Scanner searchLinesScanner = new Scanner(searchLinesFile);){
+			Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
+			Scanner searchLinesScanner = new Scanner(searchLinesFile);
+			Scanner sourceScanner = new Scanner(sourceFile);
+			
+			//if number of lines in files don't match, stop	
+			System.out.println("Checking files...");
+			while (replaceLinesScanner.hasNext()) {
+				replaceLinesRows++;
+				replaceLinesScanner.nextLine();
+			}
+			while (searchLinesScanner.hasNext()) {
+				searchLinesRows++;
+				searchLinesScanner.nextLine();
+			}
+			if (searchLinesRows == 0) {
+				System.out.println("Searched lines file is empty.");
+				System.exit(0);
+			}
+			else if (searchLinesRows != replaceLinesRows) {
+				System.out.println("Searched lines file length (" + searchLinesRows + 
+						") and replaced lines file length (" + replaceLinesRows + ") aren't the same.");
+				System.exit(0);
+			}
+			System.out.println("Files checked.");
+			
+			//for every line N in LEFT:
+			//if LEFT found in ORIGINAL, substitute with RIGHT, subCount++
+			//if LEFT not found, search for RIGHT, alreadySubbedCount++
+			//if RIGHT also not found, add N, LEFT to dictionary
+			//print subCount, alreadySubbedCount
+			PrintWriter output = new PrintWriter(outFile);
+			
+			System.out.println("Beginning replacement...");
+			String replaceString = "";
+			String currentLine = null;
+
+			while (sourceScanner.hasNext()) {
+				currentLine = sourceScanner.nextLine();
+			}
+			while (searchLinesScanner.hasNext()) {
+				Pattern searchString = Pattern.compile(searchLinesScanner.nextLine());
+				replaceString = replaceLinesScanner.nextLine();
+				Matcher matcher = searchString.matcher(currentLine);
+
+			}
+				System.out.println("Replaced.");
+
+			
+
+
 				
-				//if number of lines in files don't match, stop	
-				System.out.println("Checking files...");
-				while (replaceLinesScanner.hasNext()) {
-					replaceLinesRows++;
-					replaceLinesScanner.nextLine();
-				}
-				while (searchLinesScanner.hasNext()) {
-					searchLinesRows++;
-					searchLinesScanner.nextLine();
-				}
-				if (searchLinesRows == 0) {
-					System.out.println("Searched lines file is empty.");
-					System.exit(0);
-				}
-				else if (searchLinesRows != replaceLinesRows) {
-					System.out.println("Searched lines file length (" + searchLinesRows + 
-							") and replaced lines file length (" + replaceLinesRows + ") aren't the same.");
-					System.exit(0);
-				}
-				System.out.println("Files checked.");
-				
-//				while(sourceScanner.hasNext()) {
-//					searchLineCount++;
-//					String inputLine = input.nextLine();
-//					Matcher matcher = pattern.matcher(inputLine);
-//					
-//					while (matcher.find()) {
-//						//adds every hit line by line to output file
-//						output.write(matcher.group());
-//						output.write("\n");
-//						matchCount++;
-//					}		
-//					
-//					
-//				}
-//				System.out.println(sourceFile.getName() + " length: " + sourceFile.length());
-//				System.out.println("Lines parsed: " + lineCount);
-//				System.out.println("Matches: " + matchCount);
-				
-				}
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
-		
-		//for every line N in LEFT:
-		//if LEFT found in ORIGINAL, substitute with RIGHT, subCount++
-		//if LEFT not found, search for RIGHT, alreadySubbedCount++
-		//if RIGHT also not found, add N, LEFT to dictionary
-		//print subCount, alreadySubbedCount
-		String replaceString = "";
-		String currentLine = null;
-		try {
-			try(Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
-				Scanner searchLinesScanner = new Scanner(searchLinesFile);
-				PrintWriter output = new PrintWriter(outFile);){
-								
-				System.out.println("Beginning replacement...");
-				
-				while (searchLinesScanner.hasNext()) {
-					Pattern searchString = Pattern.compile(searchLinesScanner.nextLine());
-					replaceString = replaceLinesScanner.nextLine();
-					
-					
-					try (Scanner sourceScanner = new Scanner(sourceFile);){
-						Matcher matcher = searchString.matcher(currentLine);
-						while (sourceScanner.hasNext()) {
-							currentLine = sourceScanner.nextLine();
-							if (currentLine) {
-								
-							}
-							
-						}
-					}
-					
 
-
-
-					System.out.println(searchString);
-					System.out.println(replaceString);
-					
-				}
-				
-				System.out.println("Replaced.");
-				
-			}	
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-
-		}
-		
-		
-		
-		
-		
-		
-		
 	
 	}
 
