@@ -2,6 +2,9 @@ package replaceTextLoop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 import java.util.regex.*;
 
@@ -31,11 +34,22 @@ public class ReplaceTextLoop {
 			System.exit(0);
 		}
 		File outFile = new File(sourceFile.getName() + " out");
+		try {
+			Files.copy(sourceFile.toPath(), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			System.out.println("syso copied");
+			System.out.println("syso outfile length " + outFile.length());
+			System.out.println("syso source length " + sourceFile.length());
+			System.out.println("can write " + outFile.canWrite());
+			
+			//TODO copying don't work no more dude
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		int searchLinesRows = 0;
 		int replaceLinesRows = 0;
 		
-		//opening files, checking
+		//opening files, checking;
 		try {
 			Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
 			Scanner searchLinesScanner = new Scanner(searchLinesFile);
@@ -68,7 +82,6 @@ public class ReplaceTextLoop {
 			//if RIGHT also not found, add N, LEFT to dictionary
 			//print subCount, alreadySubbedCount
 			System.out.println("Beginning replacement...");
-			PrintWriter output = new PrintWriter(outFile);
 			int subCount = 0;	//lines replaced
 			int alreadySubbedCount = 0; //lines already replaced
 			String currentLine = null;
@@ -135,7 +148,6 @@ public class ReplaceTextLoop {
 			sourceScanner.close();
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
-			output.close();
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
