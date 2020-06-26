@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.*;
 
@@ -96,21 +97,22 @@ public class ReplaceTextLoop {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
 				Pattern pattern = Pattern.compile(searchString);
-								
 				boolean found = false;
 
 				//look through source linked list copy, replace all matches
-				for(String line : sourceLL) {
-					Matcher matcher = pattern.matcher(line);
+				//attempt 2 with iterator
+				for (ListIterator<String> sourceIter = sourceLL.listIterator(); sourceIter.hasNext();) {
+					Matcher matcher = pattern.matcher(sourceIter.next());
 					if (matcher.find()) {
 						found = true;
 //						System.out.println("Found match for: " + matcher.group());
-//						System.out.println("in the line: " + currentLine);
-						line = matcher.replaceAll(replaceString);
+//						System.out.println("in the line: " + line);
+						sourceIter.set(matcher.replaceAll(replaceString));
 						subCount++;
 					}
-				};
+				}
 				
+
 				//if not found, check if already replaced
 				if (!found) {					
 					pattern = Pattern.compile(replaceString);
@@ -120,8 +122,8 @@ public class ReplaceTextLoop {
 						if (matcher.find()) {
 							found = true;
 							alreadySubbedCount++;
-							//System.out.println("Already replaced with: " + matcher.group());
-							//System.out.println("in the line: " + currentLine);
+//							System.out.println("Already replaced with: " + matcher.group());
+//							System.out.println("in the line: " + line);
 						}	
 					}
 				}

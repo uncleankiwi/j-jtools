@@ -1,3 +1,4 @@
+REPLACE4 REPLACE2
 hoih oi asfasfasf
 hoihassfna bababadadb kdbajo asd1
 sldkfsldf slkdjflskdf asd2
@@ -5,5 +6,5 @@ laskfjalskfja dsfsdf3
 dsd4 sdf sdf 
 rrr5
 this is a repeat asd2
-another repeat asd2 asd3
+another repeat asd2 dsfsdf3
 fsdfs sdf sdf lskdj sld kj REPLACE6
