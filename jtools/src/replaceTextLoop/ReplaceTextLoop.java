@@ -3,8 +3,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.regex.*;
 
@@ -33,16 +33,12 @@ public class ReplaceTextLoop {
 			System.out.println("Replacement lines file " + replaceLinesFile.getName() + " does not exist.");
 			System.exit(0);
 		}
+		
 		File outFile = new File(sourceFile.getName() + " out");
 		try {
 			Files.copy(sourceFile.toPath(), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			System.out.println("syso copied");
-			System.out.println("syso outfile length " + outFile.length());
-			System.out.println("syso source length " + sourceFile.length());
-			System.out.println("can write " + outFile.canWrite());
-			
-			//TODO copying don't work no more dude
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -73,6 +69,8 @@ public class ReplaceTextLoop {
 						") and replaced lines file length (" + replaceLinesRows + ") aren't the same.");
 				System.exit(0);
 			}
+			searchLinesScanner.close();
+			replaceLinesScanner.close();
 			System.out.println("Files checked.");
 			
 			
@@ -86,35 +84,36 @@ public class ReplaceTextLoop {
 			int alreadySubbedCount = 0; //lines already replaced
 			String currentLine = null;
 			Scanner sourceScanner = new Scanner(sourceFile);
-
-			searchLinesScanner.close();
-			replaceLinesScanner.close();
 			searchLinesScanner = new Scanner(searchLinesFile);
 			replaceLinesScanner = new Scanner(replaceLinesFile);
+			LinkedList<String> sourceLL = new LinkedList<String>();
+			
+			while (sourceScanner.hasNext()) {
+				sourceLL.add(sourceScanner.nextLine());
+			}
+			
+			//for each line in searchLines
 			while (searchLinesScanner.hasNext()) {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
 				Pattern pattern = Pattern.compile(searchString);
 								
 				boolean found = false;
-				sourceScanner = new Scanner(sourceFile);
-				while (sourceScanner.hasNext() && !found) {
-					currentLine = sourceScanner.nextLine();
-					Matcher matcher = pattern.matcher(currentLine);
-					
+
+				//look through source linked list copy, replace all matches
+				for(String line : sourceLL) {
+					Matcher matcher = pattern.matcher(line);
 					if (matcher.find()) {
 						found = true;
 						System.out.println("Found match for: " + matcher.group());
 						System.out.println("in the line: " + currentLine);
-						
-						//TODO replace text
+						line = matcher.replaceAll(searchString);
 						
 					subCount++;
 					}
-				}
-				sourceScanner.close();
+				};
 				
-				//check if already replaced
+				//if not found, check if already replaced
 				if (!found) {					
 					sourceScanner = new Scanner(sourceFile);
 					pattern = Pattern.compile(replaceString);
@@ -132,22 +131,32 @@ public class ReplaceTextLoop {
 					}
 
 				}
-				
-				//no match, also not already replaced
+		
+				//if still no match
 				if (!found) {
 					System.out.println("Match not found for: " + searchString);
 				}
-				
-				
-				
 			}
-				System.out.println("Replaced: " + subCount + " Already replaced: " + alreadySubbedCount);
-
 			
-
+			
+			//output to file
+			PrintWriter printWriter = new PrintWriter(outFile);
+			boolean firstLine = true;
+			for (String line : sourceLL) {
+				if (firstLine) {
+					firstLine = false;
+				}
+				else {
+					printWriter.append("\n");
+				}
+				printWriter.append(line);
+			}
+			printWriter.close();
 			sourceScanner.close();
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
+			System.out.println("Replaced: " + subCount + " Already replaced: " + alreadySubbedCount);
+
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
