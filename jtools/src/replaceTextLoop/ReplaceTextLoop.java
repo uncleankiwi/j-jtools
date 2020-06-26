@@ -82,7 +82,6 @@ public class ReplaceTextLoop {
 			System.out.println("Beginning replacement...");
 			int subCount = 0;	//lines replaced
 			int alreadySubbedCount = 0; //lines already replaced
-			String currentLine = null;
 			Scanner sourceScanner = new Scanner(sourceFile);
 			searchLinesScanner = new Scanner(searchLinesFile);
 			replaceLinesScanner = new Scanner(replaceLinesFile);
@@ -105,31 +104,26 @@ public class ReplaceTextLoop {
 					Matcher matcher = pattern.matcher(line);
 					if (matcher.find()) {
 						found = true;
-						System.out.println("Found match for: " + matcher.group());
-						System.out.println("in the line: " + currentLine);
-						line = matcher.replaceAll(searchString);
-						
-					subCount++;
+//						System.out.println("Found match for: " + matcher.group());
+//						System.out.println("in the line: " + currentLine);
+						line = matcher.replaceAll(replaceString);
+						subCount++;
 					}
 				};
 				
 				//if not found, check if already replaced
 				if (!found) {					
-					sourceScanner = new Scanner(sourceFile);
 					pattern = Pattern.compile(replaceString);
-					while (sourceScanner.hasNext() && !found) {
-						currentLine = sourceScanner.nextLine();
-						Matcher matcher = pattern.matcher(currentLine);
-						
+					
+					for(String line : sourceLL) {
+						Matcher matcher = pattern.matcher(line);
 						if (matcher.find()) {
 							found = true;
 							alreadySubbedCount++;
 							//System.out.println("Already replaced with: " + matcher.group());
 							//System.out.println("in the line: " + currentLine);
-						}
-						
+						}	
 					}
-
 				}
 		
 				//if still no match
@@ -155,7 +149,7 @@ public class ReplaceTextLoop {
 			sourceScanner.close();
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
-			System.out.println("Replaced: " + subCount + " Already replaced: " + alreadySubbedCount);
+			System.out.println("Replaced: " + subCount + "\nAlready replaced: " + alreadySubbedCount);
 
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
