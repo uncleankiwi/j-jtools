@@ -1,6 +1,8 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -19,8 +21,10 @@ import javafx.stage.Stage;
 //		sourceBox
 //		searchBox
 //		replaceBox
-//		outputBox
-//		btnStart
+//		txtSaveInstr
+//		txtSaveFile
+//		startBox
+//			btnStart
 
 //FileBox - HBox
 //	leftBox - VBox
@@ -28,33 +32,30 @@ import javafx.stage.Stage;
 //		txtFile - Label
 //	btnOpen
 
-public class ReplaceUI extends Application {	
+public class ReplaceUI extends Application {
 	@Override
 	public void start(Stage pStage) throws Exception {
 		HBox uiWrapper = new HBox();
 		Label txtLog = new Label();
 		VBox filesBox = new VBox();
 		
-		FileBox sourceBox = 
-				new FileBox("Source file:", 
-						pStage, FileBox.Mode.OPEN);
-		FileBox searchBox = 
-				new FileBox("File with lines to search:", 
-						pStage, FileBox.Mode.OPEN);
-		FileBox replaceBox = 
-				new FileBox("", 
-						pStage, FileBox.Mode.OPEN);
-		FileBox outputBox = 
-				new FileBox("Save output as:", 
-						pStage, FileBox.Mode.SAVE);
-		Button btnStart = new Button("Begin");
+		FileBox sourceBox = new FileBox("Source file:", pStage);
+		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
+		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
+		Label txtSaveInstr = new Label("File will be saved as:");
+		Label txtSaveFile = new Label("");
 		txtLog.setMinSize(300, 300);
 		txtLog.setStyle("-fx-border-color: black;");
 		uiWrapper.setPadding(new Insets(5));
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
+		VBox startBox = new VBox();
+		Button btnStart = new Button("Begin");
+		startBox.getChildren().add(btnStart);
+		startBox.setAlignment(Pos.CENTER);
+		
 		filesBox.setPadding(new Insets(10));
-		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, outputBox, btnStart);
-		filesBox.setAlignment(Pos.CENTER_RIGHT);
+		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
+		filesBox.setAlignment(Pos.CENTER_LEFT);
 		
 		Scene scene = new Scene(uiWrapper);
 		pStage.setScene(scene);
@@ -66,6 +67,8 @@ public class ReplaceUI extends Application {
 		launch();
 	}
 
+
+
 }
 
 
@@ -74,16 +77,11 @@ class FileBox extends HBox{
 	private Label txtInstruction = new Label("");
 	private Label txtFile = new Label("");
 	private Button btnOpen = new Button("Open...");
-	private FileChooser fileChooser = new FileChooser();
-	public static enum Mode {OPEN, SAVE}
-//	private FileChooser.ExtensionFilter extFilter = 
-//			new FileChooser.ExtensionFilter().getExtensions().add(fileChooser);
-	
-	
+	private FileChooser fileChooser = new FileChooser();	
 	
 	public File file;
-	
-	public FileBox(String strInstructions, Stage stage, Mode mode){
+		
+	public FileBox(String strInstructions, Stage stage){
 		txtInstruction.setText(strInstructions);
 		txtFile.setMinWidth(200);
 		txtFile.setMaxWidth(200);
@@ -93,15 +91,13 @@ class FileBox extends HBox{
 		this.setPadding(new Insets(10, 0, 10, 0));
 		
 		btnOpen.setOnAction(e-> {
-			if (mode == Mode.OPEN) {
-				file = fileChooser.showOpenDialog(stage);
-			}
-			else if (mode == Mode.SAVE) {
-				file = fileChooser.showSaveDialog(stage);
-			}
-
-			});
+			file = fileChooser.showOpenDialog(stage);
+			txtFile.setText(file.getName());
+		});
 	}
+	
+
 	
 	
 }
+
