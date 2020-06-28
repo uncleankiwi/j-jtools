@@ -14,25 +14,26 @@ import java.util.regex.*;
 //for each dictionary entry, print
 //output dictionary entries with prompt
 
-public class ReplaceTextLoop {
+//listener stuff:
+//1. interface in child with method to be run in parent
+//2. instantiate interface in child
+//3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
+//4. trigger child's listener somewhere. In child?
 
-	public static void main(String[] args) {
-		//open 3 files: source, searchlines, replacelines
-		File sourceFile = new File("src.txt");
-		File searchLinesFile = new File("searchL.txt");
-		File replaceLinesFile = new File("replaceL.txt");
-		
+public class ReplaceTextLoop {	
+	public static void replaceFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
+		//open the 3 files
 		if (!sourceFile.exists() || sourceFile == null){
-			System.out.println("Source file " + sourceFile.getName() + " does not exist.");
-			System.exit(0);
+			listener.onLogOutput("Source file " + sourceFile.getName() + " does not exist.");
+			return;
 		}
 		else if (!searchLinesFile.exists()) {
-			System.out.println("Searched lines file " + searchLinesFile.getName() + " does not exist.");
-			System.exit(0);
+			listener.onLogOutput("Searched lines file " + searchLinesFile.getName() + " does not exist.");
+			return;
 		}
 		else if (!replaceLinesFile.exists()) {
-			System.out.println("Replacement lines file " + replaceLinesFile.getName() + " does not exist.");
-			System.exit(0);
+			listener.onLogOutput("Replacement lines file " + replaceLinesFile.getName() + " does not exist.");
+			return;
 		}
 		
 		File outFile = new File(sourceFile.getName() + " out");
@@ -52,7 +53,7 @@ public class ReplaceTextLoop {
 			Scanner searchLinesScanner = new Scanner(searchLinesFile);
 			
 			//if number of lines in files don't match, stop	
-			System.out.println("Checking files...");
+			listener.onLogOutput("Checking files...");
 			while (replaceLinesScanner.hasNext()) {
 				replaceLinesRows++;
 				replaceLinesScanner.nextLine();
@@ -62,17 +63,17 @@ public class ReplaceTextLoop {
 				searchLinesScanner.nextLine();
 			}
 			if (searchLinesRows == 0) {
-				System.out.println("Searched lines file is empty.");
-				System.exit(0);
+				listener.onLogOutput("Searched lines file is empty.");
+				return;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
-				System.out.println("Searched lines file length (" + searchLinesRows + 
+				listener.onLogOutput("Searched lines file length (" + searchLinesRows + 
 						") and replaced lines file length (" + replaceLinesRows + ") aren't the same.");
-				System.exit(0);
+				return;
 			}
 			searchLinesScanner.close();
 			replaceLinesScanner.close();
-			System.out.println("Files checked.");
+			listener.onLogOutput("Files checked.");
 			
 			
 			//for every line N in LEFT:
@@ -105,8 +106,6 @@ public class ReplaceTextLoop {
 					Matcher matcher = pattern.matcher(sourceIter.next());
 					if (matcher.find()) {
 						found = true;
-//						System.out.println("Found match for: " + matcher.group());
-//						System.out.println("in the line: " + line);
 						sourceIter.set(matcher.replaceAll(replaceString));
 						subCount++;
 					}
@@ -122,15 +121,13 @@ public class ReplaceTextLoop {
 						if (matcher.find()) {
 							found = true;
 							alreadySubbedCount++;
-//							System.out.println("Already replaced with: " + matcher.group());
-//							System.out.println("in the line: " + line);
 						}	
 					}
 				}
 		
 				//if still no match
 				if (!found) {
-					System.out.println("Match not found for: " + searchString);
+					listener.onLogOutput("Match not found for: " + searchString);
 				}
 			}
 			
@@ -151,7 +148,7 @@ public class ReplaceTextLoop {
 			sourceScanner.close();
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
-			System.out.println("Replaced: " + subCount + "\nAlready replaced: " + alreadySubbedCount);
+			listener.onLogOutput("Replaced: " + subCount + "\nAlready replaced: " + alreadySubbedCount);
 
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -161,5 +158,17 @@ public class ReplaceTextLoop {
 	
 	}
 
+	//1
+	public interface LogInterface{
+		public void onLogOutput(String msg);
+	}
+	
+	//2
+	private static LogInterface listener = null;
+	
+	public static void setLogOutputListener(LogInterface li) {
+		listener = li;
+	}
+	
 }
 

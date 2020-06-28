@@ -8,6 +8,8 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -32,22 +34,29 @@ import javafx.stage.Stage;
 //		txtFile - Label
 //	btnOpen
 
+//listener stuff:
+//1. interface in child with method to be run in parent
+//2. instantiate interface in child
+//3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
+//4. trigger child's listener somewhere. In child?
+
 public class ReplaceUI extends Application {
 	private File sourceFile = null;
 	private File searchFile = null;
 	private File replaceFile = null;
 	private File outputFile = null;
+	private String log = "";
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
 		HBox uiWrapper = new HBox();
 		Label txtLog = new Label();
 		VBox filesBox = new VBox();
-		
 		FileBox sourceBox = new FileBox("Source file:", pStage);
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
 		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
 		Label txtSaveInstr = new Label("File will be saved as:");
+		
 		Label txtSaveFile = new Label("");
 		txtLog.setMinSize(300, 300);
 		txtLog.setStyle("-fx-border-color: black;");
@@ -62,11 +71,20 @@ public class ReplaceUI extends Application {
 		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
 		filesBox.setAlignment(Pos.CENTER_LEFT);
 		
+		ReplaceTextLoop.setLogOutputListener(new ReplaceTextLoop.LogInterface() {
+			@Override
+			public void onLogOutput(String msg) {
+				log += msg + "\n";
+				txtLog.setText(log);
+			}
+		});
+		
 		//3. parent, listening for child
 		sourceBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
 			@Override
 			public void onFileOpened(File file) {
 				sourceFile = file;
+				//TODO set outputFile
 			}
 		});
 		
@@ -84,6 +102,36 @@ public class ReplaceUI extends Application {
 			}
 		});
 		
+		btnStart.setOnAction(e -> {
+			//check if all files have been specified
+			if (sourceFile == null) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setContentText("Please specify a source file to open.");
+				alert.showAndWait().ifPresent(null);
+			}
+			else if (searchFile == null) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setContentText("Please specify a search line file to open.");
+				alert.showAndWait().ifPresent(null);
+			}
+			else if (replaceFile == null) {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setContentText("Please specify a replacement line file to open.");
+				alert.showAndWait().ifPresent(null);
+			}
+			else if (outputFile == null) {
+				//this shouldn't happen
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setContentText("Could not determine where to output file.");
+				alert.showAndWait().ifPresent(null);
+			}
+			else {
+				ReplaceTextLoop.replaceFiles(sourceFile, searchFile, replaceFile, outputFile);
+			}
+			
+			
+		});
+				
 		Scene scene = new Scene(uiWrapper);
 		pStage.setScene(scene);
 		pStage.setTitle("Replace text loop");
@@ -118,7 +166,11 @@ class FileBox extends HBox{
 		
 		btnOpen.setOnAction(e-> {
 			file = fileChooser.showOpenDialog(stage);
-			txtFile.setText(file.getName());
+			if (file != null) {
+				txtFile.setText(file.getName());
+				//4. trigger listener
+				listener.onFileOpened(file);
+			}
 		});
 	}
 	
