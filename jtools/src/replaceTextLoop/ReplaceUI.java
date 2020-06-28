@@ -33,6 +33,11 @@ import javafx.stage.Stage;
 //	btnOpen
 
 public class ReplaceUI extends Application {
+	private File sourceFile = null;
+	private File searchFile = null;
+	private File replaceFile = null;
+	private File outputFile = null;
+	
 	@Override
 	public void start(Stage pStage) throws Exception {
 		HBox uiWrapper = new HBox();
@@ -57,6 +62,28 @@ public class ReplaceUI extends Application {
 		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
 		filesBox.setAlignment(Pos.CENTER_LEFT);
 		
+		//3. parent, listening for child
+		sourceBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
+			@Override
+			public void onFileOpened(File file) {
+				sourceFile = file;
+			}
+		});
+		
+		searchBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
+			@Override
+			public void onFileOpened(File file) {
+				searchFile = file;
+			}
+		});
+		
+		replaceBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
+			@Override
+			public void onFileOpened(File file) {
+				replaceFile = file;
+			}
+		});
+		
 		Scene scene = new Scene(uiWrapper);
 		pStage.setScene(scene);
 		pStage.setTitle("Replace text loop");
@@ -66,7 +93,6 @@ public class ReplaceUI extends Application {
 	public static void main(String[] args) {
 		launch();
 	}
-
 
 
 }
@@ -80,7 +106,7 @@ class FileBox extends HBox{
 	private FileChooser fileChooser = new FileChooser();	
 	
 	public File file;
-		
+	
 	public FileBox(String strInstructions, Stage stage){
 		txtInstruction.setText(strInstructions);
 		txtFile.setMinWidth(200);
@@ -96,7 +122,17 @@ class FileBox extends HBox{
 		});
 	}
 	
-
+	//1. interface with methods that will be fired in parent
+	public interface FileOpenedInterface{
+		public void onFileOpened(File file);
+	}
+	
+	//2. instantiate listener interface
+	private FileOpenedInterface listener = null;
+	
+	public void setFileOpenedListener(FileOpenedInterface foi) {
+		this.listener = foi;
+	}
 	
 	
 }
