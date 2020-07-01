@@ -62,6 +62,7 @@ public class ReplaceUI extends Application {
 
 		txtLog.setMinSize(300, 300);
 		txtLog.setStyle("-fx-border-color: black;");
+		txtLog.setWrapText(true);
 		uiWrapper.setPadding(new Insets(5));
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
 		startBox.getChildren().add(btnStart);
@@ -109,7 +110,6 @@ public class ReplaceUI extends Application {
 					while (outputFile.exists()) {
 						outputFile = new File(name + " " + date + " " + i + extension);
 					}
-					logOutput("syso set output as " + outputFile.getName());
 				}
 
 				txtSaveFile.setText(outputFile.getName());

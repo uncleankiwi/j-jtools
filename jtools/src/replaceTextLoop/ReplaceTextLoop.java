@@ -36,12 +36,11 @@ public class ReplaceTextLoop {
 			return;
 		}
 		
-		File outFile = new File(sourceFile.getName() + " out");
 		try {
-			Files.copy(sourceFile.toPath(), outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(sourceFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			listener.onLogOutput(e.getMessage());;
 		}
 		
 		int searchLinesRows = 0;
@@ -85,7 +84,7 @@ public class ReplaceTextLoop {
 			//if LEFT not found, search for RIGHT, alreadySubbedCount++
 			//if RIGHT also not found, add N, LEFT to dictionary
 			//print subCount, alreadySubbedCount
-			System.out.println("Beginning replacement...");
+			listener.onLogOutput(("Beginning replacement..."));
 			int subCount = 0;	//lines replaced
 			int alreadySubbedCount = 0; //lines already replaced
 			Scanner sourceScanner = new Scanner(sourceFile);
@@ -137,7 +136,7 @@ public class ReplaceTextLoop {
 			
 			
 			//output to file
-			PrintWriter printWriter = new PrintWriter(outFile);
+			PrintWriter printWriter = new PrintWriter(outputFile);
 			boolean firstLine = true;
 			for (String line : sourceLL) {
 				if (firstLine) {
