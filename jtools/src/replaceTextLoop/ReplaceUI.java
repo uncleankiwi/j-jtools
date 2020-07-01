@@ -1,6 +1,7 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import javafx.application.Application;
@@ -43,7 +44,12 @@ public class ReplaceUI extends Application {
 	Label txtLog = new Label();
 	VBox filesBox = new VBox();
 
+	Label txtSaveFile = new Label("");
 	Label txtSaveInstr = new Label("File will be saved as:");
+	
+	VBox startBox = new VBox();
+	Button btnStart = new Button("Begin");
+	
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
@@ -54,14 +60,10 @@ public class ReplaceUI extends Application {
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
 		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
 
-
-		Label txtSaveFile = new Label("");
 		txtLog.setMinSize(300, 300);
 		txtLog.setStyle("-fx-border-color: black;");
 		uiWrapper.setPadding(new Insets(5));
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
-		VBox startBox = new VBox();
-		Button btnStart = new Button("Begin");
 		startBox.getChildren().add(btnStart);
 		startBox.setAlignment(Pos.CENTER);
 		
@@ -81,12 +83,36 @@ public class ReplaceUI extends Application {
 			@Override
 			public void onFileOpened(File file) {
 				sourceFile = file;
-				String filename = sourceFile.toPath().toString();
-				Optional.ofNullable(filename)
-				.filter(f -> f.contains("."))
-				.map(f -> f.substring(filename.lastIndexOf(".") + 1));
-				logOutput(sourceFile.toPath().toString());
-				//TODO set outputFile
+				
+				//getting filename of source to generate output file's name
+				String sourceFull = sourceFile.toPath().toString();
+				String name = "";
+				String extension = "";	//includes "."
+				
+				Optional<String> optional = Optional.ofNullable(sourceFull)
+						.filter(f -> f.contains("."));
+				
+				if (sourceFull.contains(".")) {
+					name = optional.map(f -> f.substring(0, sourceFull.lastIndexOf("."))).get();
+					extension = optional.map(f -> f.substring(sourceFull.lastIndexOf("."))).get();
+				}
+				else {
+					name = sourceFull;
+				}
+
+				//try to append date
+				String date = LocalDate.now().toString();
+				outputFile = new File(name + " " + date + extension);
+				if (outputFile.exists()){
+					//but if it exists, append date + N
+					int i = 1;
+					while (outputFile.exists()) {
+						outputFile = new File(name + " " + date + " " + i + extension);
+					}
+					logOutput("syso set output as " + outputFile.getName());
+				}
+
+				txtSaveFile.setText(outputFile.getName());
 			}
 
 			@Override
