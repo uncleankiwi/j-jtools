@@ -1,8 +1,11 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.net.URLDecoder;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Base64.Decoder;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -47,16 +50,19 @@ public class ReplaceUI extends Application {
 	private File outputFile = null;
 	private String log = "";
 	
+	HBox uiWrapper = new HBox();
+	Label txtLog = new Label();
+	VBox filesBox = new VBox();
+
+	Label txtSaveInstr = new Label("File will be saved as:");
+	
 	@Override
 	public void start(Stage pStage) throws Exception {
-		HBox uiWrapper = new HBox();
-		Label txtLog = new Label();
-		VBox filesBox = new VBox();
 		FileBox sourceBox = new FileBox("Source file:", pStage);
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
 		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
-		Label txtSaveInstr = new Label("File will be saved as:");
-		
+
+
 		Label txtSaveFile = new Label("");
 		txtLog.setMinSize(300, 300);
 		txtLog.setStyle("-fx-border-color: black;");
@@ -74,8 +80,7 @@ public class ReplaceUI extends Application {
 		ReplaceTextLoop.setLogOutputListener(new ReplaceTextLoop.LogInterface() {
 			@Override
 			public void onLogOutput(String msg) {
-				log += msg + "\n";
-				txtLog.setText(log);
+				logOutput(msg);
 			}
 		});
 		
@@ -86,12 +91,22 @@ public class ReplaceUI extends Application {
 				sourceFile = file;
 				//TODO set outputFile
 			}
+
+			@Override
+			public void onLogOutput(String msg) {
+				logOutput(msg);				
+			}
 		});
 		
 		searchBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
 			@Override
 			public void onFileOpened(File file) {
 				searchFile = file;
+			}
+
+			@Override
+			public void onLogOutput(String msg) {
+				logOutput(msg);	
 			}
 		});
 		
@@ -100,30 +115,39 @@ public class ReplaceUI extends Application {
 			public void onFileOpened(File file) {
 				replaceFile = file;
 			}
+
+			@Override
+			public void onLogOutput(String msg) {
+				logOutput(msg);				
+			}
 		});
 		
 		btnStart.setOnAction(e -> {
 			//check if all files have been specified
 			if (sourceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setContentText("Please specify a source file to open.");
-				alert.showAndWait().ifPresent(null);
+				alert.setHeaderText("Please specify a source file to open.");
+				alert.setTitle("");
+				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (searchFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setContentText("Please specify a search line file to open.");
-				alert.showAndWait().ifPresent(null);
+				alert.setHeaderText("Please specify a search line file to open.");
+				alert.setTitle("");
+				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (replaceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setContentText("Please specify a replacement line file to open.");
-				alert.showAndWait().ifPresent(null);
+				alert.setHeaderText("Please specify a replacement line file to open.");
+				alert.setTitle("");
+				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (outputFile == null) {
 				//this shouldn't happen
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setContentText("Could not determine where to output file.");
-				alert.showAndWait().ifPresent(null);
+				alert.setHeaderText("Could not determine where to output file.");
+				alert.setTitle("");
+				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
 				ReplaceTextLoop.replaceFiles(sourceFile, searchFile, replaceFile, outputFile);
@@ -140,6 +164,11 @@ public class ReplaceUI extends Application {
 	
 	public static void main(String[] args) {
 		launch();
+	}
+	
+	public void logOutput(String msg) {
+		log += msg + "\n";
+		txtLog.setText(log);
 	}
 
 
@@ -165,6 +194,15 @@ class FileBox extends HBox{
 		this.setPadding(new Insets(10, 0, 10, 0));
 		
 		btnOpen.setOnAction(e-> {
+			//find where this jar is, and set file dialogue's default directory to it
+			String decodedPath = "";
+			try {
+				String jarPath = (ReplaceUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+				decodedPath = URLDecoder.decode(jarPath, "UTF-8");
+			} catch (Exception ex) {
+				onLogOutput(ex.getMessage());
+			}
+			fileChooser.setInitialDirectory(new File(decodedPath));
 			file = fileChooser.showOpenDialog(stage);
 			if (file != null) {
 				txtFile.setText(file.getName());
@@ -177,6 +215,8 @@ class FileBox extends HBox{
 	//1. interface with methods that will be fired in parent
 	public interface FileOpenedInterface{
 		public void onFileOpened(File file);
+		
+		public void onLogOutput(String msg);
 	}
 	
 	//2. instantiate listener interface
