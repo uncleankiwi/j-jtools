@@ -64,11 +64,15 @@ public class ReplaceTextLoop {
 			}
 			if (searchLinesRows == 0) {
 				listener.onLogOutput("Searched lines file is empty.");
+				replaceLinesScanner.close();
+				searchLinesScanner.close();
 				return;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
 				listener.onLogOutput("Searched lines file length (" + searchLinesRows + 
 						") and replaced lines file length (" + replaceLinesRows + ") aren't the same.");
+				replaceLinesScanner.close();
+				searchLinesScanner.close();
 				return;
 			}
 			searchLinesScanner.close();

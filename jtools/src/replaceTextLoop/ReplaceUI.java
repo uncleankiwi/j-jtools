@@ -2,11 +2,6 @@ package replaceTextLoop;
 
 import java.io.File;
 import java.net.URLDecoder;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Base64.Decoder;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -58,6 +53,9 @@ public class ReplaceUI extends Application {
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
+		txtLog.setPadding(new Insets(5));
+		txtLog.setAlignment(Pos.TOP_LEFT);
+		
 		FileBox sourceBox = new FileBox("Source file:", pStage);
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
 		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
@@ -89,6 +87,8 @@ public class ReplaceUI extends Application {
 			@Override
 			public void onFileOpened(File file) {
 				sourceFile = file;
+				
+				logOutput(sourceFile.toPath().toString());
 				//TODO set outputFile
 			}
 
@@ -200,7 +200,7 @@ class FileBox extends HBox{
 				String jarPath = (ReplaceUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
 				decodedPath = URLDecoder.decode(jarPath, "UTF-8");
 			} catch (Exception ex) {
-				onLogOutput(ex.getMessage());
+				listener.onLogOutput(ex.getMessage());
 			}
 			fileChooser.setInitialDirectory(new File(decodedPath));
 			file = fileChooser.showOpenDialog(stage);
