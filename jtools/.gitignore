@@ -1,7 +1,5 @@
 /bin/
 /TEST
-/replaceL.txt
-/searchL.txt
-/src - Copy.txt
-/src.txt
+/*.txt
+
 /src.txt out
