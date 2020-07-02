@@ -24,7 +24,7 @@ import java.util.regex.*;
 
 public class ReplaceTextLoop {	
 	//list of chars to escape later
-	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", "+", ".");
+	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", ".", "+", "*");
 	
 	public static void replaceFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
 		//open the 3 files
@@ -92,6 +92,7 @@ public class ReplaceTextLoop {
 			listener.onLogOutput(("Beginning replacement..."));
 			int subCount = 0;	//lines replaced
 			int alreadySubbedCount = 0; //lines already replaced
+			int notFoundCount = 0;	//neither searched lines nor replacement found
 			Scanner sourceScanner = new Scanner(sourceFile);
 			searchLinesScanner = new Scanner(searchLinesFile);
 			replaceLinesScanner = new Scanner(replaceLinesFile);
@@ -125,7 +126,7 @@ public class ReplaceTextLoop {
 
 				//if not found, check if already replaced
 				if (!found) {					
-					pattern = Pattern.compile(replaceString);
+					pattern = Pattern.compile(escapeCharacters(replaceString));
 					
 					for(String line : sourceLL) {
 						Matcher matcher = pattern.matcher(line);
@@ -139,6 +140,7 @@ public class ReplaceTextLoop {
 				//if still no match
 				if (!found) {
 					listener.onLogOutput("Match not found for: " + searchString);
+					notFoundCount++;
 				}
 			}
 			
@@ -159,8 +161,10 @@ public class ReplaceTextLoop {
 			sourceScanner.close();
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
-			listener.onLogOutput("Replaced: " + subCount + "\nAlready replaced: " + alreadySubbedCount);
-
+			listener.onLogOutput("Replaced: " + subCount);
+			listener.onLogOutput("Already replaced: " + alreadySubbedCount);
+			listener.onLogOutput("Not found: " + notFoundCount);
+			
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

@@ -55,16 +55,17 @@ public class ReplaceUI extends Application {
 	@Override
 	public void start(Stage pStage) throws Exception {
 		txtLog.setPadding(new Insets(5));
-		//txtLog.setAlignment(Pos.TOP_LEFT);
 		txtLog.setEditable(false);
+		txtLog.setMaxSize(480, 300);
+		txtLog.setMinSize(480, 300);
+		txtLog.setStyle("-fx-border-color: black;");
+//		txtLog.setWrapText(true);
 		
 		FileBox sourceBox = new FileBox("Source file:", pStage);
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
 		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
 
-		txtLog.setMinSize(300, 300);
-		txtLog.setStyle("-fx-border-color: black;");
-		txtLog.setWrapText(true);
+
 		uiWrapper.setPadding(new Insets(5));
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
 		startBox.getChildren().add(btnStart);
@@ -111,6 +112,7 @@ public class ReplaceUI extends Application {
 					int i = 1;
 					while (outputFile.exists()) {
 						outputFile = new File(name + " " + date + " " + i + extension);
+						i++;
 					}
 				}
 
