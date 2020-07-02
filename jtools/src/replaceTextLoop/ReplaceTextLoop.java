@@ -100,6 +100,14 @@ public class ReplaceTextLoop {
 			while (searchLinesScanner.hasNext()) {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
+				
+				//putting in escape characters for ", {, }, (, ),
+				searchString = searchString.replace("\"", "\\\"");
+				searchString = searchString.replace("{", "\\{");
+				searchString = searchString.replace("}", "\\}");
+				searchString = searchString.replace("(", "\\(");
+				searchString = searchString.replace(")", "\\)");
+				searchString = searchString.replace("+", "\\+");
 				Pattern pattern = Pattern.compile(searchString);
 				boolean found = false;
 
