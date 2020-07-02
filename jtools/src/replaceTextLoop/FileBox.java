@@ -21,7 +21,7 @@ class FileBox extends HBox{
 	private VBox leftBox = new VBox();
 	private Label txtInstruction = new Label("");
 	private Label txtFile = new Label("");
-	private Button btnOpen = new Button("Open...");
+	private Button btnOpen = new Button(ReplaceUI.getMessage("open"));
 	private FileChooser fileChooser = new FileChooser();	
 	
 	public File file;

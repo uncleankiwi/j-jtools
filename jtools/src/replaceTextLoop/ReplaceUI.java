@@ -48,31 +48,39 @@ public class ReplaceUI extends Application {
 	private File outputFile = null;
 	private String log = "";
 
-	Locale enLocale = new Locale("en");
-	Locale jaLocale = new Locale("ja");
-	Locale currentLocale = jaLocale;
+	private static Locale enLocale = new Locale("en");
+	private static Locale jaLocale = new Locale("ja");
+	private static Locale currentLocale = jaLocale;
 
-	VBox uiWrapWrapper = new VBox();
-	HBox uiWrapper = new HBox();
-	TextArea txtLog = new TextArea();
-	VBox filesBox = new VBox();
+	private VBox uiWrapWrapper = new VBox();
+	private HBox uiWrapper = new HBox();
+	private TextArea txtLog = new TextArea();
+	private VBox filesBox = new VBox();
 
-	Label txtSaveFile = new Label("");
-	Label txtSaveInstr = new Label("File will be saved as:");
+	private Label txtSaveFile = new Label("");
+	private Label txtSaveInstr = new Label(getMessage("file_saved_as"));
 	
-	VBox startBox = new VBox();
-	Button btnStart = new Button("Begin");
+	private VBox startBox = new VBox();
+	private Button btnStart = new Button(getMessage("begin"));
 	
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
 		//internationalisation stuff
-		Menu mnuLang = new Menu("Language");
+		Menu mnuLang = new Menu(getMessage("language"));
 		MenuBar menuBar = new MenuBar();
 		menuBar.getMenus().add(mnuLang);
-		MenuItem mnuEng = new MenuItem("English");
-		MenuItem mnuFr = new MenuItem("French");
-		mnuLang.getItems().addAll(mnuEng, mnuFr);
+		MenuItem mnuEn = new MenuItem(
+				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", enLocale).getString("lang_name"));
+		mnuEn.setOnAction(e -> {
+			currentLocale = enLocale;
+		});
+		MenuItem mnuJa = new MenuItem(
+				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", jaLocale).getString("lang_name"));
+		mnuEn.setOnAction(e -> {
+			currentLocale = jaLocale;
+		});
+		mnuLang.getItems().addAll(mnuEn, mnuJa);
 
 		
 		
@@ -85,9 +93,9 @@ public class ReplaceUI extends Application {
 		txtLog.setMinSize(480, 300);
 		txtLog.setStyle("-fx-border-color: black;");
 		
-		FileBox sourceBox = new FileBox("Source file:", pStage);
-		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
-		FileBox replaceBox = new FileBox("Replace with these lines:", pStage);
+		FileBox sourceBox = new FileBox(getMessage("source_file"), pStage);
+		FileBox searchBox = new FileBox(getMessage("search_source_with"), pStage);
+		FileBox replaceBox = new FileBox(getMessage("replace_source_with"), pStage);
 
 
 		uiWrapper.setPadding(new Insets(5));
@@ -179,26 +187,26 @@ public class ReplaceUI extends Application {
 			//check if all files have been specified
 			if (sourceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText("Please specify a source file to open.");
+				alert.setHeaderText(getMessage("specify_source"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (searchFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText("Please specify a search line file to open.");
+				alert.setHeaderText(getMessage("specify_search"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (replaceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText("Please specify a replacement line file to open.");
+				alert.setHeaderText(getMessage("specify_replacement"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (outputFile == null) {
 				//this shouldn't happen
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText("Could not determine where to output file.");
+				alert.setHeaderText(getMessage("cannot_output"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
@@ -225,10 +233,10 @@ public class ReplaceUI extends Application {
 		txtLog.setText(log);
 	}
 	
-	public String getMessage(String key) {
-		return ResourceBundle.getBundle("jtools.src.replaceTextLoop.ApplicationResources", currentLocale).getString(key);
+	public static String getMessage(String key) {
+		return ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", currentLocale).getString(key);
 	}
-
+	
 
 }
 
