@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.*;
@@ -21,6 +23,9 @@ import java.util.regex.*;
 //4. trigger child's listener somewhere. In child?
 
 public class ReplaceTextLoop {	
+	//list of chars to escape later
+	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", "+", ".");
+	
 	public static void replaceFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
 		//open the 3 files
 		if (!sourceFile.exists() || sourceFile == null){
@@ -101,13 +106,8 @@ public class ReplaceTextLoop {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
 				
-				//putting in escape characters for ", {, }, (, ),
-				searchString = searchString.replace("\"", "\\\"");
-				searchString = searchString.replace("{", "\\{");
-				searchString = searchString.replace("}", "\\}");
-				searchString = searchString.replace("(", "\\(");
-				searchString = searchString.replace(")", "\\)");
-				searchString = searchString.replace("+", "\\+");
+				//putting in escape characters
+				searchString = escapeCharacters(searchString);
 				Pattern pattern = Pattern.compile(searchString);
 				boolean found = false;
 
@@ -169,6 +169,15 @@ public class ReplaceTextLoop {
 	
 	}
 
+	public static String escapeCharacters(String input) {
+		//escapes characters so that they're not recognised by regex
+		for (String oldStr : noNoChars) {
+			input = input.replace(oldStr, "\\" + oldStr);
+		}
+		return input;
+	}
+	
+	
 	//1
 	public interface LogInterface{
 		public void onLogOutput(String msg);

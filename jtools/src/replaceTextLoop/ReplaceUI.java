@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -41,7 +42,7 @@ public class ReplaceUI extends Application {
 	private String log = "";
 	
 	HBox uiWrapper = new HBox();
-	Label txtLog = new Label();
+	TextArea txtLog = new TextArea();
 	VBox filesBox = new VBox();
 
 	Label txtSaveFile = new Label("");
@@ -54,7 +55,8 @@ public class ReplaceUI extends Application {
 	@Override
 	public void start(Stage pStage) throws Exception {
 		txtLog.setPadding(new Insets(5));
-		txtLog.setAlignment(Pos.TOP_LEFT);
+		//txtLog.setAlignment(Pos.TOP_LEFT);
+		txtLog.setEditable(false);
 		
 		FileBox sourceBox = new FileBox("Source file:", pStage);
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
