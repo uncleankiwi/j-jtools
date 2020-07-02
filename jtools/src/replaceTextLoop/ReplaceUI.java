@@ -5,8 +5,11 @@ import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.LogManager;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -67,24 +70,34 @@ public class ReplaceUI extends Application {
 	@Override
 	public void start(Stage pStage) throws Exception {
 		//internationalisation stuff
-		Menu mnuLang = new Menu(getMessage("language"));
 		MenuBar menuBar = new MenuBar();
-		menuBar.getMenus().add(mnuLang);
+		Menu mnuLang = new Menu(getMessage("language"));
+		
 		MenuItem mnuEn = new MenuItem(
 				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", enLocale).getString("lang_name"));
 		mnuEn.setOnAction(e -> {
 			currentLocale = enLocale;
+			ReplaceUI rui = new ReplaceUI();
+			try {
+				rui.start(pStage);		
+			} catch (Exception ex) {
+				logOutput(ex.getMessage());
+			}
 		});
 		MenuItem mnuJa = new MenuItem(
 				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", jaLocale).getString("lang_name"));
-		mnuEn.setOnAction(e -> {
+		mnuJa.setOnAction(e -> {
 			currentLocale = jaLocale;
+			ReplaceUI rui = new ReplaceUI();
+			try {
+				rui.start(pStage);		
+			} catch (Exception ex) {
+				logOutput(ex.getMessage());
+			}
 		});
-		mnuLang.getItems().addAll(mnuEn, mnuJa);
 
-		
-		
-		//TODO i18n
+		mnuLang.getItems().addAll(mnuEn, mnuJa);
+		menuBar.getMenus().add(mnuLang);
 		
 		//UI
 		txtLog.setPadding(new Insets(5));
