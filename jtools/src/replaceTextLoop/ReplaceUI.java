@@ -2,7 +2,9 @@ package replaceTextLoop;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -45,7 +47,11 @@ public class ReplaceUI extends Application {
 	private File replaceFile = null;
 	private File outputFile = null;
 	private String log = "";
-	
+
+	Locale enLocale = new Locale("en");
+	Locale jaLocale = new Locale("ja");
+	Locale currentLocale = jaLocale;
+
 	VBox uiWrapWrapper = new VBox();
 	HBox uiWrapper = new HBox();
 	TextArea txtLog = new TextArea();
@@ -60,14 +66,19 @@ public class ReplaceUI extends Application {
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
+		//internationalisation stuff
 		Menu mnuLang = new Menu("Language");
 		MenuBar menuBar = new MenuBar();
 		menuBar.getMenus().add(mnuLang);
 		MenuItem mnuEng = new MenuItem("English");
 		MenuItem mnuFr = new MenuItem("French");
 		mnuLang.getItems().addAll(mnuEng, mnuFr);
+
+		
+		
 		//TODO i18n
 		
+		//UI
 		txtLog.setPadding(new Insets(5));
 		txtLog.setEditable(false);
 		txtLog.setMaxSize(480, 300);
@@ -200,7 +211,7 @@ public class ReplaceUI extends Application {
 				
 		Scene scene = new Scene(uiWrapWrapper);
 		pStage.setScene(scene);
-		pStage.setTitle("Replace text loop");
+		pStage.setTitle(getMessage("window_title"));
 		pStage.setResizable(false);
 		pStage.show();
 	}
@@ -212,6 +223,10 @@ public class ReplaceUI extends Application {
 	public void logOutput(String msg) {
 		log += msg + "\n";
 		txtLog.setText(log);
+	}
+	
+	public String getMessage(String key) {
+		return ResourceBundle.getBundle("jtools.src.replaceTextLoop.ApplicationResources", currentLocale).getString(key);
 	}
 
 
