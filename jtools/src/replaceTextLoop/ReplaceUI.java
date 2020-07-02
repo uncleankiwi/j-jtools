@@ -1,15 +1,12 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.LogManager;
-
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -227,7 +224,6 @@ public class ReplaceUI extends Application {
 				ReplaceTextLoop.replaceFiles(sourceFile, searchFile, replaceFile, outputFile);
 			}
 			
-			
 		});
 				
 		Scene scene = new Scene(uiWrapWrapper);
@@ -250,7 +246,12 @@ public class ReplaceUI extends Application {
 		return ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", currentLocale).getString(key);
 	}
 	
-
+	//overloaded log printing method for putting in placeholders {0}, {1}, etc
+	public static String getMessage(String key, Object[] args) {
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(currentLocale);
+		return MessageFormat.format(getMessage(key), args);
+	}
 }
 
 
