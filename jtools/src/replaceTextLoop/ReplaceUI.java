@@ -12,21 +12,26 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-//uiWrapper - HBox
-//	txtLog - TextField
-//	filesBox - VBox
-//		sourceBox
-//		searchBox
-//		replaceBox
-//		txtSaveInstr
-//		txtSaveFile
-//		startBox
-//			btnStart
+//uiWrapWrapper - VBox
+//	menuBar
+//	uiWrapper - HBox
+//		txtLog - TextField
+//		filesBox - VBox
+//			sourceBox
+//			searchBox
+//			replaceBox
+//			txtSaveInstr
+//			txtSaveFile
+//			startBox
+//				btnStart
 
 //listener stuff:
 //1. interface in child with method to be run in parent
@@ -41,6 +46,7 @@ public class ReplaceUI extends Application {
 	private File outputFile = null;
 	private String log = "";
 	
+	VBox uiWrapWrapper = new VBox();
 	HBox uiWrapper = new HBox();
 	TextArea txtLog = new TextArea();
 	VBox filesBox = new VBox();
@@ -54,12 +60,19 @@ public class ReplaceUI extends Application {
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
+		Menu mnuLang = new Menu("Language");
+		MenuBar menuBar = new MenuBar();
+		menuBar.getMenus().add(mnuLang);
+		MenuItem mnuEng = new MenuItem("English");
+		MenuItem mnuFr = new MenuItem("French");
+		mnuLang.getItems().addAll(mnuEng, mnuFr);
+		//TODO i18n
+		
 		txtLog.setPadding(new Insets(5));
 		txtLog.setEditable(false);
 		txtLog.setMaxSize(480, 300);
 		txtLog.setMinSize(480, 300);
 		txtLog.setStyle("-fx-border-color: black;");
-//		txtLog.setWrapText(true);
 		
 		FileBox sourceBox = new FileBox("Source file:", pStage);
 		FileBox searchBox = new FileBox("Search source with these lines:", pStage);
@@ -70,6 +83,8 @@ public class ReplaceUI extends Application {
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
 		startBox.getChildren().add(btnStart);
 		startBox.setAlignment(Pos.CENTER);
+		
+		uiWrapWrapper.getChildren().addAll(menuBar, uiWrapper);
 		
 		filesBox.setPadding(new Insets(10));
 		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
@@ -183,9 +198,10 @@ public class ReplaceUI extends Application {
 			
 		});
 				
-		Scene scene = new Scene(uiWrapper);
+		Scene scene = new Scene(uiWrapWrapper);
 		pStage.setScene(scene);
 		pStage.setTitle("Replace text loop");
+		pStage.setResizable(false);
 		pStage.show();
 	}
 	

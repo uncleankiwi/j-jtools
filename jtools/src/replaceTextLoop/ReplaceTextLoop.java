@@ -109,6 +109,9 @@ public class ReplaceTextLoop {
 				
 				//putting in escape characters
 				searchString = escapeCharacters(searchString);
+				
+				//TODO step here to replace variables with non-capturing group?
+				
 				Pattern pattern = Pattern.compile(searchString);
 				boolean found = false;
 
