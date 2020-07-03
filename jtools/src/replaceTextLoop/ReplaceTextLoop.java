@@ -23,9 +23,6 @@ import java.util.regex.*;
 //4. trigger child's listener somewhere. In child?
 
 public class ReplaceTextLoop {	
-	//list of chars to escape later
-	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", ".", "+", "*");
-	
 	//holds input files
 	private static LinkedList<String> sourceLL = new LinkedList<String>();
 	private static LinkedList<String> searchLL = new LinkedList<String>();
@@ -105,7 +102,17 @@ public class ReplaceTextLoop {
 			}
 			sourceScanner.close();
 			
+			//TODO 0: index SOURCE for all "text" in every line
+			
+			
 			//for each line in searchLines
+			for (ListIterator<String> sourceIter = sourceLL.listIterator(); sourceIter.hasNext();) {
+				
+				
+			}
+			
+			
+			//old iteration
 			while (searchLinesScanner.hasNext()) {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
@@ -132,8 +139,6 @@ public class ReplaceTextLoop {
 				
 				
 				
-				//putting in escape characters
-				searchString = escapeCharacters(searchString);
 				
 				//TODO step here to replace variables with non-capturing group?
 				
@@ -154,8 +159,7 @@ public class ReplaceTextLoop {
 
 				//if not found, check if already replaced
 				if (!found) {					
-					pattern = Pattern.compile(escapeCharacters(replaceString));
-					
+				
 					for(String line : sourceLL) {
 						Matcher matcher = pattern.matcher(line);
 						if (matcher.find()) {
@@ -186,7 +190,7 @@ public class ReplaceTextLoop {
 				printWriter.append(line);
 			}
 			printWriter.close();
-			sourceScanner.close();
+
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
 			listener.onLogOutput(ReplaceUI.getMessage("replaced", new Object[] {subCount}));
@@ -201,14 +205,6 @@ public class ReplaceTextLoop {
 	
 	}
 
-	public static String escapeCharacters(String input) {
-		//escapes characters so that they're not recognised by regex
-		for (String oldStr : noNoChars) {
-			input = input.replace(oldStr, "\\" + oldStr);
-		}
-		return input;
-	}
-	
 	
 	//1
 	public interface LogInterface{
