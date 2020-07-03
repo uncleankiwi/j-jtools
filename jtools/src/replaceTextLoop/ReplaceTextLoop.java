@@ -26,6 +26,11 @@ public class ReplaceTextLoop {
 	//list of chars to escape later
 	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", ".", "+", "*");
 	
+	//holds input files
+	private static LinkedList<String> sourceLL = new LinkedList<String>();
+	private static LinkedList<String> searchLL = new LinkedList<String>();
+	private static LinkedList<String> replaceLL = new LinkedList<String>();
+	
 	public static void replaceFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
 		//open the 3 files
 		if (!sourceFile.exists() || sourceFile == null){
@@ -63,27 +68,25 @@ public class ReplaceTextLoop {
 			listener.onLogOutput(ReplaceUI.getMessage("checking_files"));
 			while (replaceLinesScanner.hasNext()) {
 				replaceLinesRows++;
-				replaceLinesScanner.nextLine();
+				replaceLL.add(replaceLinesScanner.nextLine());
 			}
 			while (searchLinesScanner.hasNext()) {
 				searchLinesRows++;
-				searchLinesScanner.nextLine();
+				searchLL.add(searchLinesScanner.nextLine());
 			}
+			searchLinesScanner.close();
+			replaceLinesScanner.close();
+			
 			if (searchLinesRows == 0) {
 				listener.onLogOutput(ReplaceUI.getMessage("search_file_empty"));
-				replaceLinesScanner.close();
-				searchLinesScanner.close();
 				return;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
 				listener.onLogOutput(ReplaceUI.getMessage("file_not_equal_length", 
 						new Object[] {searchLinesRows, replaceLinesRows} ));
-				replaceLinesScanner.close();
-				searchLinesScanner.close();
 				return;
 			}
-			searchLinesScanner.close();
-			replaceLinesScanner.close();
+
 			listener.onLogOutput(ReplaceUI.getMessage("files_checked"));
 			
 			
@@ -99,7 +102,7 @@ public class ReplaceTextLoop {
 			Scanner sourceScanner = new Scanner(sourceFile);
 			searchLinesScanner = new Scanner(searchLinesFile);
 			replaceLinesScanner = new Scanner(replaceLinesFile);
-			LinkedList<String> sourceLL = new LinkedList<String>();
+			
 			
 			while (sourceScanner.hasNext()) {
 				sourceLL.add(sourceScanner.nextLine());
@@ -109,6 +112,28 @@ public class ReplaceTextLoop {
 			while (searchLinesScanner.hasNext()) {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
+				
+				
+				//TODO from here...
+//				source:
+//					xxxx"text1"+VARXYZ + "text2"xxx, "textA"xxx
+//
+//				search:
+//					xxxx "text1" + var_123 + "text2" xxx, "textA" xxx
+//
+//				replace:
+//					xxxx "text1" + VARXYZ + "text2" xxx, "text3" + VARXYZ + "text4" xxx
+//
+//				1: find all "text" and var_N in SEARCH
+//				2: for each SOURCE line, find all "text"
+//				3: check if "text" count and contents match
+//				4: --> match: for matches, find VARXYZ list
+//				5: for each var_N, replace var_N with VARXYZ in REPLACE
+//				6: from first char of first "text/var_N" in SOURCE to last char of last, replace with same of REPLACE
+
+				
+				
+				
 				
 				//putting in escape characters
 				searchString = escapeCharacters(searchString);
