@@ -128,10 +128,20 @@ public class ReplaceTextLoop {
 //				replace:
 //					xxxx "text1" + VARXYZ + "text2" xxx, "text3" + VARXYZ + "text4" xxx
 //
-//				1: index SEARCH: rawText, noSpaceText, list of var_N(M), list of noVarNoSpaceText
-//				2: index SOURCE: rawText, noSpaceText
-//				3: for each noVarnoSpaceText in each SEARCHINDEX, search each SOURCEINDEX noSpaceText
-//				3: for each SEARCHINDEX, search SOURCEINDEX: 
+//				1: index SEARCH: rawText, noSpaceText, list of var_N(M), list of noVarNoSpaceText	--
+//					list of var_N(M): in rawText, from 'var' till first ')', '+', ','			--
+//				2: index SOURCE: rawText, noSpaceText 												--
+//				3: index REPLACE: rawText, replaceVarRawText										--later
+//				4: for each noVarNoSpaceText in each SEARCHINDEX, search each SOURCEINDEX noSpaceText	--
+//					if one matches, 
+//				5: --> all match: 
+//					if list of var_N(M) not empty, for element in SEARCHINDEX, 
+//						if current element is noVarNoSpaceText, subtract from SOURCE noSpaceText
+//						if current element is var_N(M), from get from start till first ')', '+', ',', 
+//							replace all instances of var_N(M) in REPLACE.rawText
+//				replace each var_N with varXYZ, save in replaceVarRawText
+//						put in SOURCE rawText from 
+				
 //				3: for each SOURCEINDEX, check if "text" count and contents match
 //				4: --> match: for matches, find VARXYZ list
 //				5: for each var_N, replace var_N with VARXYZ in REPLACE
