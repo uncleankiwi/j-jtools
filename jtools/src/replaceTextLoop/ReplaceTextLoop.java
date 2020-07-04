@@ -4,9 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.*;
@@ -128,17 +126,21 @@ public class ReplaceTextLoop {
 //				replace:
 //					xxxx "text1" + VARXYZ + "text2" xxx, "text3" + VARXYZ + "text4" xxx
 //
-//				1: index SEARCH: rawText, noSpaceText, list of var_N(M), list of noVarNoSpaceText	--
-//					list of var_N(M): in rawText, from 'var' till first ')', '+', ','			--
-//				2: index SOURCE: rawText, noSpaceText 												--
-//				3: index REPLACE: rawText, replaceVarRawText										--later
-//				4: for each noVarNoSpaceText in each SEARCHINDEX, search each SOURCEINDEX noSpaceText	--
-//					if one matches, 
-//				5: --> all match: 
+//				indexing:
+//				1: index SEARCH: rawText, noSpaceText, list of var_N(M), list of noVarNoSpaceText		--
+//					list of var_N(M): in rawText, from 'var' till first ')', '+', ',' outside quotes	!!
+//				2: index SOURCE: rawText, noSpaceText 													--
+//				3: index REPLACE: rawText, replaceVarRawText											--
+				
+//				searching for line match:
+//				4: for each noVarNoSpaceText in each SEARCHINDEX, search each SOURCEINDEX.noSpaceText	--
+//				5: --> all match: (not necessarily in order - assumption made)							
 //					if list of var_N(M) not empty, for element in SEARCHINDEX, 
 //						if current element is noVarNoSpaceText, subtract from SOURCE noSpaceText
 //						if current element is var_N(M), from get from start till first ')', '+', ',', 
 //							replace all instances of var_N(M) in REPLACE.rawText
+//					//diff?
+//					//
 //				replace each var_N with varXYZ, save in replaceVarRawText
 //						put in SOURCE rawText from 
 				
