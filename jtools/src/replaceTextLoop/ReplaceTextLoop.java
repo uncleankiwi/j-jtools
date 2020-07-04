@@ -120,7 +120,7 @@ public class ReplaceTextLoop {
 				
 				//TODO from here...
 //				source:
-//					xxxx"text1"+VARXYZ + "text2"xxx, "textA"xxx
+//					xxxx"text1"+VARXYZ   + "text2"xxx, "textA"xxx
 //
 //				search:
 //					xxxx "text1" + var_123 + "text2" xxx, "textA" xxx
@@ -128,9 +128,11 @@ public class ReplaceTextLoop {
 //				replace:
 //					xxxx "text1" + VARXYZ + "text2" xxx, "text3" + VARXYZ + "text4" xxx
 //
-//				1: find all "text" and var_N in SEARCH
-//				2: for each SOURCE line, find all "text"
-//				3: check if "text" count and contents match
+//				1: index SEARCH: rawText, noSpaceText, list of var_N(M), list of noVarNoSpaceText
+//				2: index SOURCE: rawText, noSpaceText
+//				3: for each noVarnoSpaceText in each SEARCHINDEX, search each SOURCEINDEX noSpaceText
+//				3: for each SEARCHINDEX, search SOURCEINDEX: 
+//				3: for each SOURCEINDEX, check if "text" count and contents match
 //				4: --> match: for matches, find VARXYZ list
 //				5: for each var_N, replace var_N with VARXYZ in REPLACE
 //				6: from first char of first "text/var_N" in SOURCE to last char of last, replace with same of REPLACE
@@ -140,7 +142,6 @@ public class ReplaceTextLoop {
 				
 				
 				
-				//TODO step here to replace variables with non-capturing group?
 				
 				Pattern pattern = Pattern.compile(searchString);
 				boolean found = false;
