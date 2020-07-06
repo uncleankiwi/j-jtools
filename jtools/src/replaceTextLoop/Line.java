@@ -20,10 +20,10 @@ public class Line {
 	public void indexQuotes() {
 		quoteCount = 0;
 		quoteList = new LinkedList<String>();
-		Pattern pattern = Pattern.compile("\"(.*?)^\\\"");	//search string
+		Pattern pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");	//search string
 		//all in one quote				"  .+  "
 		//includes escaped quotes		"  (.*?)  " 
-		//								"  (..*?)  "
+		//ignores escaped quotes		"  (.*?)  (?<!\)  "
 		Matcher matcher = pattern.matcher(rawtext);
 		while (matcher.find()) {
 			quoteCount++;
