@@ -1,7 +1,5 @@
 package replaceTextLoop;
 
-import java.util.LinkedList;
-
 public class RTLtest {
 
 	public static void main(String[] args) {
@@ -15,6 +13,9 @@ public class RTLtest {
 		sourceIndex.add("lang(\"戦闘時にはあまり相手に近づかないらしい\" + _ga(3) + \"。まぁそりゃそう\" + _da(3) + \"、本来は通信機なんだから。もし戦うなら、コイツからテレポートで距離を取って、他の敵を先に片づけたほうがマシ\" + _daro(3) + \"。\", \"Sorry, this is untranslated sentence.\")");
 		sourceIndex.add("lang(\"\" + var_80 + \"の鈍足\", \"Decreases speed by \" + var_80)");
 		sourceIndex.add("lang(var_63(1, 0) + var_63(0, 0) + \"は狂喜して叫んだ。「\" + var_436 + \"！！」\" + var_236, var_63(1, 0) + \" \" + var_63(0, 0) + \" goes wild with joy, \\\"\" + var_436 + \"!!\\\" \" + cnven(var_236))");
+		sourceIndex.indexQuotes();
+		sourceIndex.indexVars();
+		sourceIndex.print();
 	}
 
 }
