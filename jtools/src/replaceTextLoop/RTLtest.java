@@ -1,10 +1,13 @@
 package replaceTextLoop;
 
+import java.util.LinkedList;
+
 public class RTLtest {
 
 	public static void main(String[] args) {
-		List<String> sourceIndex;
-		//lang("ゼミフラグ＝" + var_65(250 + 330) + " ", "Seminar variable:" + var_65(250 + 330) + " ")
+		LinesIndex sourceIndex = new LinesIndex();
+		sourceIndex.add("lang(\"ゼミフラグ＝\" + var_65(250 + 330) + \" \", \"Seminar variable:\" + var_65(250 + 330) + \" \")");
+
 	}
 
 }
