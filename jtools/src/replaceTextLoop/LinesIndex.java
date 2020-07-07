@@ -1,6 +1,5 @@
 package replaceTextLoop;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -29,19 +28,30 @@ public class LinesIndex {
 	}
 	
 	public String replaceLoop(LinesIndex sourceIndex, LinesIndex replaceIndex) {
-		int replacedCount = 0;
+		int totalReplacedCount = 0;	//number of sourceIndex lines replaced
+		int replacedCount = 0; //searchIndex lines that have had at least 1 replacement
 		int alreadyReplacedCount = 0;
 		int noMatchCount = 0;
 		
 		
-	/*
-
-	
-		TODO dsf 
+		
+	/*	TODO 
 		given SOURCEINDEX, REPLACEINDEX
-			for each line, 
+			for each SEARCHINDEX line, 
 				1. check each sourceIndex quote list to see if equal
 				2. quotes equal: 
+					0. found = false
+					1. find sourceIndex line varList
+					2. check if varList = sourceIndex line varList
+					3. replace replaceIndex line rawText's vars. search this.varList, replace with sourceIndex VarList
+					4. replace sourceIndex line's rawText with replaceIndex line's rawText
+					5. totalReplacedCount++, found = true
+				?. if found = true, replacedCount++
+				3. no match:
+					check each sourceIndex quote list with replaceIndex quoteList to see if equal
+					quotes equal: 
+						alreadyReplacedCount++
+					
 				for every quote list match found
 					create SOURCEINDEX line varList
 					if this line's varList.count != SOURCEINDEX's line's varList.count, go to next quote list match
@@ -54,7 +64,8 @@ public class LinesIndex {
 					search 
 		*/	
 		
-		return "Replaced: " + replacedCount + 
+		return replacedCount + "/" + this.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
+				"in the source file." +
 				"\nAlready replaced: " + alreadyReplacedCount +
 				"\nNo matches: " + noMatchCount;
 	}
