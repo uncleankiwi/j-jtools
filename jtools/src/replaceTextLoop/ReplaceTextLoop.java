@@ -136,14 +136,14 @@ public class ReplaceTextLoop {
 //				3: index REPLACE: rawText, list of quotes, list of var_N								--
 				
 //				searching for line match:
-//				4: line.quotesEqual(Str): SEARCHINDEX quoteList equal to SOURCEINDEX line?				--
+//				4: SEARCHINDEX quoteList equal to SOURCEINDEX line?				--
 //				5: --> all match:							
 //					if list of var_N(M) not empty, for element in SEARCHINDEX, 
 //						if current element is noVarNoSpaceText, subtract from SOURCE noSpaceText
 //						if current element is var_N(M), from get from start till first ')', '+', ',', 
 //							replace all instances of var_N(M) in REPLACE.rawText
 //					//diff?
-//					//
+//					
 //				replace each var_N with varXYZ, save in replaceVarRawText
 //						put in SOURCE rawText from 
 				

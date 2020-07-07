@@ -1,5 +1,6 @@
 package replaceTextLoop;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -18,12 +19,31 @@ public class LinesIndex {
 		}
 	}
 	
+	//run only on SEARCHINDEX and REPLACEINDEX. won't work on SOURCEINDEX
 	public void indexVars() {
 		ListIterator<Line> iter = LI.listIterator();
 		while (iter.hasNext()) {
 			Line line = iter.next();
 			line.indexVars();
 		}
+	}
+	
+	public String replaceLoop(LinesIndex sourceIndex, LinesIndex replaceIndex) {
+		int replacedCount = 0;
+		int alreadyReplacedCount = 0;
+		int noMatchCount = 0;
+		
+		
+		
+		//TODO
+		//given SOURCEINDEX, REPLACEINDEX, for each Line
+		
+		
+		
+		
+		return "Replaced: " + replacedCount + 
+				"\nAlready replaced: " + alreadyReplacedCount +
+				"\nNo matches: " + noMatchCount;
 	}
 	
 	public void print() {	//temp
