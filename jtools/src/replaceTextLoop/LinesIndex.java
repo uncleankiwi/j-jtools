@@ -34,12 +34,25 @@ public class LinesIndex {
 		int noMatchCount = 0;
 		
 		
+	/*
+
+	
+		TODO dsf 
+		given SOURCEINDEX, REPLACEINDEX
+			for each line, 
+				1. check each sourceIndex quote list to see if equal
+				2. quotes equal: 
+				for every quote list match found
+					create SOURCEINDEX line varList
+					if this line's varList.count != SOURCEINDEX's line's varList.count, go to next quote list match
+						if SEARCHINDEX line.varList.count != 0
+							for var in each SOURCEINDEX line.varList
+								search REPLACEINDEX line's rawText with SEARCHINDEX line var at same index, replace with this var
+						replace
 		
-		//TODO
-		//given SOURCEINDEX, REPLACEINDEX, for each Line
-		
-		
-		
+				if no matches for this line
+					search 
+		*/	
 		
 		return "Replaced: " + replacedCount + 
 				"\nAlready replaced: " + alreadyReplacedCount +
