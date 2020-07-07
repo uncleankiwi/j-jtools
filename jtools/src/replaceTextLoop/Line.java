@@ -23,7 +23,7 @@ public class Line {
 		Pattern pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");	//search string
 		//all in one quote				"  .+  "
 		//includes escaped quotes		"  (.*?)  " 
-		//ignores escaped quotes		"  (.*?)  (?<!\)  "
+		//ignores escaped quotes		"  (.*?)  (?<!\)  " - lookbehind
 		Matcher matcher = pattern.matcher(rawtext);
 		while (matcher.find()) {
 			quoteCount++;
@@ -49,6 +49,12 @@ public class Line {
 	
 	public int varCount() {
 		return this.varCount;
+	}
+	
+	//check if order and contents of this line's quoteList is same as input string's
+	public boolean tryReplace(LinkedList<String> inputList) {
+		
+		return this.quoteList.equals(inputList);
 	}
 
 	public LinkedList<String> getQuotes(){

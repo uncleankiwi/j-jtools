@@ -127,16 +127,17 @@ public class ReplaceTextLoop {
 //					xxxx "text1" + VARXYZ + "text2" xxx, "text3" + VARXYZ + "text4" xxx
 //
 //				indexing:
-//				1: index SEARCH: rawText, list of quotes, list of var_N(M), list of noVarNoSpaceText	--
-//					list of quotes																		!!
-//					list of var_N(M): in rawText, from 'var' till first ')', '+', ',' outside quotes	!!
+//				1: index SEARCH: rawText, list of quotes, list of var_N, list of noVarNoSpaceText		--
+//					list of quotes																		done
+//					list of var_N			 															done
+//					list of noVarNoSpaceText - compare with SOURCE's to find SOURCE vars				--
 //					
 //				2: index SOURCE: rawText, list of quotes 												--
-//				3: index REPLACE: rawText, list of quotes, list of var_N(M)								--
+//				3: index REPLACE: rawText, list of quotes, list of var_N								--
 				
 //				searching for line match:
-//				4: for each noVarNoSpaceText in each SEARCHINDEX, search each SOURCEINDEX.noSpaceText	--
-//				5: --> all match: (not necessarily in order - assumption made)							
+//				4: line.quotesEqual(Str): SEARCHINDEX quoteList equal to SOURCEINDEX line?				--
+//				5: --> all match:							
 //					if list of var_N(M) not empty, for element in SEARCHINDEX, 
 //						if current element is noVarNoSpaceText, subtract from SOURCE noSpaceText
 //						if current element is var_N(M), from get from start till first ')', '+', ',', 
