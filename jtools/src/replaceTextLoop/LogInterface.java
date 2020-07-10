@@ -1,5 +1,6 @@
 package replaceTextLoop;
 
-public class LogInterface {
 
+public interface LogInterface {
+	public void logOutput(String msg);
 }

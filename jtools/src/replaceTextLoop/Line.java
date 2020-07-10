@@ -70,4 +70,8 @@ public class Line {
 		return varList;
 	}
 	
+	public String getRaw() {
+		return this.rawtext;
+	}
+	
 }

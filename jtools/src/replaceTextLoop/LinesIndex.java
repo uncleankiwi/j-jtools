@@ -5,6 +5,7 @@ import java.util.ListIterator;
 
 public class LinesIndex {
 	private LinkedList<Line> LI = new LinkedList<Line>();
+	private static LogInterface logListener;
 	
 	public void add(String str) {
 		LI.addLast(new Line(str));
@@ -31,7 +32,7 @@ public class LinesIndex {
 		return LI.listIterator();
 	}
 	
-	public static String replaceLoop(LinesIndex searchIndex, LinesIndex sourceIndex, LinesIndex replaceIndex) {
+	public static void replaceLoop(LinesIndex searchIndex, LinesIndex sourceIndex, LinesIndex replaceIndex) {
 		int totalReplacedCount = 0;	//number of sourceIndex lines replaced
 		int replacedCount = 0; //searchIndex lines that have had at least 1 replacement
 		int alreadyReplacedCount = 0;
@@ -54,7 +55,9 @@ public class LinesIndex {
 				
 				//if match SOURCEINDEX line
 				if (Line.quotesMatch(searchLine, sourceLine)) {
-					
+					//find SOURCEINDEX vars
+		 			//replace REPLACEINDEX's line's vars
+		 			//replace SOURCEINDEX line with REPLACEINDEX line	 
 				}
 				
 			}
@@ -71,7 +74,7 @@ public class LinesIndex {
 					}
 					else {
 						noMatchCount++;
-						//TODO output search line
+						logOutput("Line " + lineNumber + " " + searchLine.getRaw());
 					}
 					
 					
@@ -123,10 +126,20 @@ public class LinesIndex {
 					search 
 		*/	
 		
-		return replacedCount + "/" + searchIndex.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
+		logOutput(replacedCount + "/" + searchIndex.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
 				"in the source file." +
 				"\nAlready replaced: " + alreadyReplacedCount +
-				"\nNo matches: " + noMatchCount;
+				"\nNo matches: " + noMatchCount);
+	}
+	
+	public void setLogOutputListener(LogInterface newListener) {
+		logListener = newListener;
+	}
+	
+	private static void logOutput(String msg) {
+		if (logListener != null) {
+			logListener.logOutput(msg);
+		}
 	}
 	
 	public void print() {	//temp
@@ -149,4 +162,6 @@ public class LinesIndex {
 			
 		}	
 	}
+
+
 }
