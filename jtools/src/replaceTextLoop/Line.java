@@ -18,29 +18,38 @@ public class Line {
 	}
 	
 	public void indexQuotes() {
-		quoteCount = 0;
-		quoteList = new LinkedList<String>();
+		this.quoteCount = 0;
+		this.quoteList = new LinkedList<String>();
 		Pattern pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");	//search string
 		//all in one quote				"  .+  "
 		//includes escaped quotes		"  (.*?)  " 
 		//ignores escaped quotes		"  (.*?)  (?<!\)  " - lookbehind
-		Matcher matcher = pattern.matcher(rawtext);
+		Matcher matcher = pattern.matcher(this.rawtext);
 		while (matcher.find()) {
-			quoteCount++;
-			quoteList.addLast(matcher.group());
+			this.quoteCount++;
+			this.quoteList.addLast(matcher.group());
 		}
 		
 	}
 	
 	public void indexVars() {
-		varCount = 0;
-		varList = new LinkedList<String>();
+		this.varCount = 0;
+		this.varList = new LinkedList<String>();
 		Pattern pattern = Pattern.compile("var_\\d+");	//search string
-		Matcher matcher = pattern.matcher(rawtext);
+		Matcher matcher = pattern.matcher(this.rawtext);
 		while (matcher.find()) {
-			varCount++;
-			varList.addLast(matcher.group());
+			this.varCount++;
+			this.varList.addLast(matcher.group());
 		}
+	}
+	
+	public boolean indexUnknownVars() {
+		this.varCount = 0;
+		//get contents of lang(), if lang() is present
+		
+		//substring with stuff in "quotes", '+', '-'
+		
+		return true;
 	}
 	
 	public int quoteCount() {
@@ -58,7 +67,6 @@ public class Line {
 	}
 	
 	public static boolean quotesMatch(Line line1, Line line2) {
-		
 		return line1.getQuotes().equals(line2.getQuotes());
 	}
 

@@ -55,9 +55,19 @@ public class LinesIndex {
 				
 				//if match SOURCEINDEX line
 				if (Line.quotesMatch(searchLine, sourceLine)) {
+					boolean pass = true;
+					
 					//find SOURCEINDEX vars
+					pass = sourceLine.indexUnknownVars();
+					
+					if (pass) {
+						
+					}
+					
 		 			//replace REPLACEINDEX's line's vars
-		 			//replace SOURCEINDEX line with REPLACEINDEX line	 
+					
+					
+		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line	 
 				}
 				
 			}
