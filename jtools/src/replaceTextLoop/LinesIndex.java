@@ -27,15 +27,74 @@ public class LinesIndex {
 		}
 	}
 	
-	public String replaceLoop(LinesIndex sourceIndex, LinesIndex replaceIndex) {
+	public ListIterator<Line> listIterator() {
+		return LI.listIterator();
+	}
+	
+	public static String replaceLoop(LinesIndex searchIndex, LinesIndex sourceIndex, LinesIndex replaceIndex) {
 		int totalReplacedCount = 0;	//number of sourceIndex lines replaced
 		int replacedCount = 0; //searchIndex lines that have had at least 1 replacement
 		int alreadyReplacedCount = 0;
 		int noMatchCount = 0;
 		
-		
+		//for each SEARCHINDEX line
+		ListIterator<Line> searchIter = searchIndex.listIterator();
+		ListIterator<Line> replaceIter = replaceIndex.listIterator();
+		while (searchIter.hasNext()) {
+			int lineNumber = searchIter.nextIndex();
+			Line searchLine = searchIter.next();
+			Line replaceLine = replaceIter.next();
+			
+			boolean found = false;	//is this line present at least once in entire source?
+			
+			//for each SOURCEINDEX line
+			ListIterator<Line> sourceIter = sourceIndex.listIterator();
+			while (sourceIter.hasNext()) {
+				Line sourceLine = sourceIter.next();
+				
+				//if match SOURCEINDEX line
+				if (Line.quotesMatch(searchLine, sourceLine)) {
+					
+				}
+				
+			}
+			
+			
+			//if no matches
+			if (!found) {
+				//for each SOURCEINDEX line
+				sourceIter = sourceIndex.listIterator();
+				while (sourceIter.hasNext()) {
+					Line sourceLine = sourceIter.next();
+					if (Line.quotesMatch(replaceLine, sourceLine)) {
+						alreadyReplacedCount++;
+					}
+					else {
+						noMatchCount++;
+						//TODO output search line
+					}
+					
+					
+					
+				}
+			}
+			
+		}
 		
 	/*	TODO 
+	 
+	 	for each SEARCHINDEX line,
+	 		for each SOURCEINDEX line
+		 		if match SOURCEINDEX line
+		 			find SOURCEINDEX vars
+		 			replace REPLACEINDEX's line's vars
+		 			replace SOURCEINDEX line with REPLACEINDEX line	 		
+	 		if no matches,
+	 			for each SOURCEINDEX line
+	 				if match equivalent REPLACEINDEX line, alreadyReplacedCount++
+	 		
+	 
+	 
 		given SOURCEINDEX, REPLACEINDEX
 			for each SEARCHINDEX line, 
 				1. check each sourceIndex quote list to see if equal
@@ -64,7 +123,7 @@ public class LinesIndex {
 					search 
 		*/	
 		
-		return replacedCount + "/" + this.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
+		return replacedCount + "/" + searchIndex.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
 				"in the source file." +
 				"\nAlready replaced: " + alreadyReplacedCount +
 				"\nNo matches: " + noMatchCount;

@@ -53,16 +53,21 @@ public class Line {
 	
 	//check if order and contents of this line's quoteList is same as input string's
 	public boolean tryReplace(LinkedList<String> inputList) {
-		
+		//TODO ?
 		return this.quoteList.equals(inputList);
+	}
+	
+	public static boolean quotesMatch(Line line1, Line line2) {
+		
+		return line1.getQuotes().equals(line2.getQuotes());
 	}
 
 	public LinkedList<String> getQuotes(){
-		return quoteList;	//temp
+		return quoteList;
 	}
 	
 	public LinkedList<String> getVars(){
-		return varList;	//temp
+		return varList;
 	}
 	
 }
