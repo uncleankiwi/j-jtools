@@ -8,10 +8,15 @@ import java.util.regex.Pattern;
 //variables in it
 public class Line {
 	private String rawtext = "";
+	
+	//for lang()
 	private LinkedList<String> quoteList = new LinkedList<String>();
 	private LinkedList<String> varList = new LinkedList<String>();
 	private int quoteCount;
 	private int varCount;
+	
+	//for descriptions:
+	//private LinkedList<String> nonLangQuoteList = new LinkedList<String>();
 	
 	public Line(String raw) {
 		this.rawtext = raw;
@@ -43,11 +48,43 @@ public class Line {
 		}
 	}
 	
-	public boolean indexUnknownVars() {
+	public boolean indexUnknownVars(Line searchLine) {
 		this.varCount = 0;
-		//get contents of lang(), if lang() is present
+		//no vars to get in this line
+		if (searchLine.varCount == 0) return true;
 		
-		//substring with stuff in "quotes", '+', '-'
+		//get contents of lang()
+		Pattern pattern = Pattern.compile("lang\\(.*\\)");
+		Matcher matcher = pattern.matcher(this.rawtext);
+		String sourceLangPart = "";
+		if (matcher.find()) {
+			sourceLangPart = matcher.group();
+		}
+		else {
+			return false;
+		}
+		
+		//remove spaces in both 
+		String sourceNoSpaces = sourceLangPart.replace(" ", "");
+		String searchNoSpaces = searchLine.getRaw().replace(" ", "");
+				
+		//substring with vars
+		LinkedList<Integer> varStarts = new LinkedList<Integer>();
+		LinkedList<Integer> varEnds = new LinkedList<Integer>();
+		System.out.println(sourceNoSpaces);
+		String searchNSTemp = searchNoSpaces;
+		
+		for (String var : searchLine.getVars()) {
+			pattern = Pattern.compile(var);
+			matcher = pattern.matcher(searchNSTemp);
+			if (matcher.find()) {
+				matcher.
+			}
+			else {
+				return false;
+			}
+			
+		}
 		
 		return true;
 	}
@@ -76,6 +113,7 @@ public class Line {
 	
 	public LinkedList<String> getVars(){
 		return varList;
+		
 	}
 	
 	public String getRaw() {

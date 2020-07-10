@@ -58,7 +58,7 @@ public class LinesIndex {
 					boolean pass = true;
 					
 					//find SOURCEINDEX vars
-					pass = sourceLine.indexUnknownVars();
+					pass = sourceLine.indexUnknownVars(searchLine);
 					
 					if (pass) {
 						
@@ -84,7 +84,7 @@ public class LinesIndex {
 					}
 					else {
 						noMatchCount++;
-						logOutput("Line " + lineNumber + " " + searchLine.getRaw());
+						logOutput("Line " + lineNumber + " not found: " + searchLine.getRaw());
 					}
 					
 					
