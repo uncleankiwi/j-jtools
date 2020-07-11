@@ -69,16 +69,24 @@ public class Line {
 		String searchNoSpaces = searchLine.getRaw().replace(" ", "");
 				
 		//substring with vars
-		LinkedList<Integer> varStarts = new LinkedList<Integer>();
-		LinkedList<Integer> varEnds = new LinkedList<Integer>();
-		System.out.println(sourceNoSpaces);
+		LinkedList<Integer> searchVarStarts = new LinkedList<Integer>();
+		LinkedList<Integer> searchVarEnds = new LinkedList<Integer>();
+		LinkedList<String> nonVarList = new LinkedList<String>();
+		LinkedList<Integer> sourceNonVarStarts = new LinkedList<Integer>();
+		LinkedList<Integer> sourceNonVarEnds = new LinkedList<Integer>();
 		String searchNSTemp = searchNoSpaces;
 		
 		for (String var : searchLine.getVars()) {
 			pattern = Pattern.compile(var);
 			matcher = pattern.matcher(searchNSTemp);
+			//string1 var1 string2 var2 string3
+			//1. find searchVarStart, searchVarEnd in searchNoSpaces
+			//2. get nonVarList by substring searchNoSpaces searchVarStart 0, searchVarStart - 1
+			//		...searchVarEnd + 1, searchVarStart - 1... searchVarEnd + 1, searchNoSpaces.length()
+			//3. find sourceNonVarStart, sourceNonVarEnd in sourceNoSpaces
+			//4. populate varlist by substring sourceNonVarEnd + 1, sourceNonVarStart[+1] - 1
 			if (matcher.find()) {
-				matcher.
+
 			}
 			else {
 				return false;
