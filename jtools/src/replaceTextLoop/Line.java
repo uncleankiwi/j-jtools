@@ -1,11 +1,13 @@
 package replaceTextLoop;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//holds one line of source/line to search/line to replace, with a list of stuff enclosed by quotation marks, and a list of
-//variables in it
+//holds one line of source code/line to search/line to replace, with a list of stuff enclosed by quotation marks,
+//and a list of variables in it. Also some utility static methods for interacting with other Lines
 public class Line {
 	private String rawtext = "";
 	
@@ -14,7 +16,7 @@ public class Line {
 	private LinkedList<String> varList = new LinkedList<String>();
 	private int quoteCount;
 	private int varCount;
-	
+	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", ".", "+", "*");
 	//for descriptions:
 	//private LinkedList<String> nonLangQuoteList = new LinkedList<String>();
 	
@@ -74,25 +76,55 @@ public class Line {
 		LinkedList<String> nonVarList = new LinkedList<String>();
 		LinkedList<Integer> sourceNonVarStarts = new LinkedList<Integer>();
 		LinkedList<Integer> sourceNonVarEnds = new LinkedList<Integer>();
-		String searchNSTemp = searchNoSpaces;
+		int searchStartPos = 0;
 		
+		//string0 var0 string1 var1 string2
+		//1. find searchVarStart, searchVarEnd in searchNoSpaces
 		for (String var : searchLine.getVars()) {
 			pattern = Pattern.compile(var);
-			matcher = pattern.matcher(searchNSTemp);
-			//string1 var1 string2 var2 string3
-			//1. find searchVarStart, searchVarEnd in searchNoSpaces
-			//2. get nonVarList by substring searchNoSpaces searchVarStart 0, searchVarStart - 1
-			//		...searchVarEnd + 1, searchVarStart - 1... searchVarEnd + 1, searchNoSpaces.length()
-			//3. find sourceNonVarStart, sourceNonVarEnd in sourceNoSpaces
-			//4. populate varlist by substring sourceNonVarEnd + 1, sourceNonVarStart[+1] - 1
-			if (matcher.find()) {
-
+			matcher = pattern.matcher(searchNoSpaces);
+			if (matcher.find(searchStartPos)) {
+				searchVarStarts.add(matcher.start());
+				searchVarEnds.add(matcher.end());
+				searchStartPos = matcher.end();
 			}
 			else {
 				return false;
 			}
-			
 		}
+		
+		//2. get nonVarList by substring searchNoSpaces: searchVarStart 0, searchVarStart - 1
+		//		...searchVarEnd + 1, searchVarStart - 1... searchVarEnd + 1, searchNoSpaces.length()
+		for (int i = 0; i < searchLine.varCount() + 1; i++) {	//assuming there are varCount + 1 nonVar
+			int nonVarStart;
+			int nonVarEnd;
+			if (i == 0) {
+				nonVarStart = 0;
+			}
+			else {
+				nonVarStart = searchVarEnds.get(i - 1) + 1;
+			}
+			
+			if (i == searchLine.varCount) {
+				nonVarEnd = sourceNoSpaces.length() - 1;
+			}
+			else {
+				nonVarEnd = searchVarStarts.get(i) - 1;
+			}
+			
+			nonVarList.add(searchNoSpaces.substring(nonVarStart, nonVarEnd));
+		}		
+		
+		//string0 var0 string1 var1 string2
+		//3. find sourceNonVarStart, sourceNonVarEnd in sourceNoSpaces
+		for (String nonVar : nonVarList) {
+			pattern = Pattern.compile(Line.escapeCharacters(nonVar));
+			matcher = pattern.matcher(sourceNoSpaces);
+			
+//			sourceNonVarStarts
+		}	
+		//4. populate varlist by substring sourceNonVarEnd + 1, sourceNonVarStart[+1] - 1	
+		
 		
 		return true;
 	}
@@ -126,6 +158,14 @@ public class Line {
 	
 	public String getRaw() {
 		return this.rawtext;
+	}
+	
+	public static String escapeCharacters(String input) {
+		//escapes characters so that they're not recognised by regex
+		for (String oldStr : noNoChars) {
+			input = input.replace(oldStr, "\\" + oldStr);
+		}
+		return input;
 	}
 	
 }

@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.regex.*;
 
+//extracts lang(stuff) from source code for easy translation and later incorporation
 public class ExtractRegexMatches {
 
 	public static void main(String[] args) {

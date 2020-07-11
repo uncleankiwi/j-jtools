@@ -3,6 +3,9 @@ package replaceTextLoop;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+
+//a collection of Line objects. equivalent to the entire source code text file, or a search/replace text file.
+//non-lang() searches and replacements are NOT these
 public class LinesIndex {
 	private LinkedList<Line> LI = new LinkedList<Line>();
 	private static LogInterface logListener;

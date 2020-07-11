@@ -11,6 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+
+//a pane that holds a file in the UI
 //FileBox - HBox
 //leftBox - VBox
 //	txtInstruction - Label

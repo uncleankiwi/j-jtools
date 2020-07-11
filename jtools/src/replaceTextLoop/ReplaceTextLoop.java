@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.*;
 
+//possibly obsolete logic-tier class. replaced by static methods in LinesIndex
 
 //output SUBSTITUTE
 //for each dictionary entry, print

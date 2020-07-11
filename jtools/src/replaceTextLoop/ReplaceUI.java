@@ -22,6 +22,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+//UI for picking source code file and search/replace lines file.
+
 //uiWrapWrapper - VBox
 //	menuBar
 //	uiWrapper - HBox
