@@ -31,15 +31,24 @@ public class RTLtest {
 //		searchIndex.indexQuotes();
 //		
 		
-		Line search1 = new Line("lang(\"ゼミフラグ＝\" + var_65(250 + 330) + \" \", \"Seminar variable:\" + var_65(250 + 330) + \" \")");
+		Line search1 = new Line("lang(var_63(1, 0) + var_63(0, 0) + \"は狂喜して叫んだ。「\" + var_436 + \"！！」\" + var_236, var_63(1, 0) + \" \" + var_63(0, 0) + \" goes wild with joy, \\\"\" + var_436 + \"!!\\\" \" + cnven(var_236))");
 		search1.indexQuotes();
 		search1.indexVars();
-		Line src1 = new Line("aasdasd(0,49) = lang( \"ゼミフラグ＝\" + hoihoi(250 + 330) + \" \", \"Seminar variable:\" + mmmm333(250+330) + \" \")");
+		Line replace1 = new Line("lang(var_63(1, 0) + var_63(0, 0) + \"は狂喜して叫んだ。「\" + var_436 + \"！！」\" + var_436 + var_236, var_63(1, 0) + \" \" + var_63(0, 0) + var_63(0, 0) + \" this eez a new tl!, \\\"\" + var_436 + \"??\\\" \" + cnven(var_236))");
+		replace1.indexQuotes();
+		replace1.indexVars();
+		
+		Line src1 = new Line("lang(cキャラ(1, 0) + cキャラ(0, 0) + \"は狂喜して叫んだ。「\" + negaigoto + \"！！」\" + なぞ, cキャラ(1, 0) + \" \" + cキャラ(0, 0) + \" goes wild with joy, \\\"\" + negaigoto + \"!!\\\" \" + cnven(なぞ))");
 		src1.indexQuotes();
 		
+		boolean pass;
 		src1.indexUnknownVars(search1);
 		System.out.println(src1.getVars());
-		
+		pass = Line.tryReplace(search1, replace1, src1);
+		System.out.println("try replace: " + pass);
+		src1.setRaw(replace1.getRaw());
+		System.out.println(replace1.getRaw());
+		System.out.println(src1.getRaw());
 		
 	}
 

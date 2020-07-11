@@ -3,6 +3,7 @@ package replaceTextLoop;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ public class Line {
 		}
 	}
 	
+	//find and populate the list of variables in a line of source code, given an indexed search line
 	public boolean indexUnknownVars(Line searchLine) {
 		this.varCount = 0;
 		//no vars to get in this line
@@ -112,7 +114,7 @@ public class Line {
 				nonVarEnd = searchVarStarts.get(i) - 1;
 			}
 			
-			nonVarList.add(searchNoSpaces.substring(nonVarStart, nonVarEnd));
+			nonVarList.add(searchNoSpaces.substring(nonVarStart, nonVarEnd));	//TODO index oob
 		}		
 		
 		//string0 var0 string1 var1 string2
@@ -137,6 +139,7 @@ public class Line {
 		for (int i = 0; i < searchLine.varCount(); i++) {
 			this.varList.add(sourceNoSpaces.substring(
 					sourceNonVarEnds.get(i) + 1, sourceNonVarStarts.get(i + 1) - 1));
+			this.varCount++;
 		}
 		
 		return true;
@@ -150,14 +153,32 @@ public class Line {
 		return this.varCount;
 	}
 	
-	//check if order and contents of this line's quoteList is same as input string's
-	public boolean tryReplace(LinkedList<String> inputList) {
-		//TODO ?
-		return this.quoteList.equals(inputList);
+	//search replace line with searchLine's varList, replace with sourceLine's varList
+	public static boolean tryReplace(Line searchLine, Line replaceLine, Line sourceLine) {
+		if (searchLine.varCount() != replaceLine.varCount() || searchLine.varCount() != sourceLine.varCount()) {
+			System.out.println("syso search line vars: " + searchLine.varCount());
+			System.out.println("replace line vars: " + replaceLine.varCount());
+			System.out.println("source line vars: " + sourceLine.varCount());
+			return false;
+		}
+		else {
+			ListIterator<String> searchVarIter = searchLine.getVars().listIterator();
+			ListIterator<String> sourceVarIter = sourceLine.getVars().listIterator();
+			while (searchVarIter.hasNext()) {
+				String searchVar = searchVarIter.next();
+				String sourceVar = sourceVarIter.next();
+				replaceLine.setRaw(replaceLine.getRaw().replace(searchVar, sourceVar));
+			}
+		}
+		return true;
 	}
 	
 	public static boolean quotesMatch(Line line1, Line line2) {
 		return line1.getQuotes().equals(line2.getQuotes());
+	}
+	
+	public void setRaw(String newRaw) {
+		this.rawtext = newRaw;
 	}
 
 	public LinkedList<String> getQuotes(){

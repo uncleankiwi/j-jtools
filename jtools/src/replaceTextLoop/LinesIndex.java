@@ -63,16 +63,20 @@ public class LinesIndex {
 					//find SOURCEINDEX vars
 					pass = sourceLine.indexUnknownVars(searchLine);
 					
+					//replace REPLACEINDEX's line's vars
 					if (pass) {
-						
+						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
+					}
+					else {
+						logOutput("Failed to replace variables in replace line.");
 					}
 					
-		 			//replace REPLACEINDEX's line's vars
-					
-					
-		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line	 
-				}
-				
+		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
+					if (pass) {
+						sourceLine.setRaw(replaceLine.getRaw());
+						found = true;
+					}
+				}	
 			}
 			
 			
@@ -89,15 +93,12 @@ public class LinesIndex {
 						noMatchCount++;
 						logOutput("Line " + lineNumber + " not found: " + searchLine.getRaw());
 					}
-					
-					
-					
 				}
 			}
 			
 		}
 		
-	/*	TODO 
+	/*
 	 
 	 	for each SEARCHINDEX line,
 	 		for each SOURCEINDEX line
