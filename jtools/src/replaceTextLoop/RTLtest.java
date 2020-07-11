@@ -38,6 +38,7 @@ public class RTLtest {
 		src1.indexQuotes();
 		
 		src1.indexUnknownVars(search1);
+		System.out.println(src1.getVars());
 		
 		
 	}

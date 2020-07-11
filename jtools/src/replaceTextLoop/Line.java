@@ -86,7 +86,7 @@ public class Line {
 			if (matcher.find(searchStartPos)) {
 				searchVarStarts.add(matcher.start());
 				searchVarEnds.add(matcher.end());
-				searchStartPos = matcher.end();
+				searchStartPos = matcher.end() + 1;
 			}
 			else {
 				return false;
@@ -117,14 +117,27 @@ public class Line {
 		
 		//string0 var0 string1 var1 string2
 		//3. find sourceNonVarStart, sourceNonVarEnd in sourceNoSpaces
+		searchStartPos = 0;
 		for (String nonVar : nonVarList) {
 			pattern = Pattern.compile(Line.escapeCharacters(nonVar));
 			matcher = pattern.matcher(sourceNoSpaces);
-			
-//			sourceNonVarStarts
+			if (matcher.find(searchStartPos)) {
+				sourceNonVarStarts.add(matcher.start());
+				sourceNonVarEnds.add(matcher.end());
+				searchStartPos = matcher.end() + 1;
+			}
+			else {
+				return false;
+			}
 		}	
-		//4. populate varlist by substring sourceNonVarEnd + 1, sourceNonVarStart[+1] - 1	
 		
+		//4. populate varlist by substring sourceNonVarEnd + 1, sourceNonVarStart[+1] - 1	
+		this.varCount = 0;
+		this.varList = new LinkedList<String>();
+		for (int i = 0; i < searchLine.varCount(); i++) {
+			this.varList.add(sourceNoSpaces.substring(
+					sourceNonVarEnds.get(i) + 1, sourceNonVarStarts.get(i + 1) - 1));
+		}
 		
 		return true;
 	}
