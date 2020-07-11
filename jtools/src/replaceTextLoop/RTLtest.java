@@ -38,7 +38,7 @@ public class RTLtest {
 		replace1.indexQuotes();
 		replace1.indexVars();
 		
-		Line src1 = new Line("lang(cキャラ(1, 0) + cキャラ(0, 0) + \"は狂喜して叫んだ。「\" + negaigoto + \"！！」\" + なぞ, cキャラ(1, 0) + \" \" + cキャラ(0, 0) + \" goes wild with joy, \\\"\" + negaigoto + \"!!\\\" \" + cnven(なぞ))");
+		Line src1 = new Line("stuffToDisplay = lang(  cキャラ(1,0) + cキャラ(0,0) + \"は狂喜して叫んだ。「\" + negaigoto + \"！！」\" + なぞ,cキャラ(1, 0) + \" \" +    cキャラ(0, 0) + \" goes wild with joy, \\\"\" + negaigoto + \"!!\\\" \" + cnven(なぞ)  )  ");
 		src1.indexQuotes();
 		
 		boolean pass;
