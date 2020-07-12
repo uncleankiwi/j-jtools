@@ -1,11 +1,17 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -48,7 +54,7 @@ public class ReplaceUI extends Application {
 	private File searchFile = null;
 	private File replaceFile = null;
 	private File outputFile = null;
-	private String log = "";
+	private String  log = "";
 
 	private static Locale enLocale = new Locale("en");
 	private static Locale jaLocale = new Locale("ja");
@@ -65,6 +71,9 @@ public class ReplaceUI extends Application {
 	private VBox startBox = new VBox();
 	private Button btnStart = new Button(getMessage("begin"));
 	
+	private LinesIndex searchLI = new LinesIndex();
+	private LinesIndex replaceLI = new LinesIndex();
+	private LinesIndex sourceLI = new LinesIndex();
 	
 	@Override
 	public void start(Stage pStage) throws Exception {
@@ -121,12 +130,13 @@ public class ReplaceUI extends Application {
 		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
 		filesBox.setAlignment(Pos.CENTER_LEFT);
 		
-		ReplaceTextLoop.setLogOutputListener(new ReplaceTextLoop.LogInterface() {
+		LinesIndex.setLogOutputListener(new LogInterface() {	//TODO remove
 			@Override
 			public void onLogOutput(String msg) {
 				logOutput(msg);
 			}
 		});
+		
 		
 		//3. parent, listening for child
 		sourceBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
@@ -223,7 +233,7 @@ public class ReplaceUI extends Application {
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
-				ReplaceTextLoop.replaceFiles(sourceFile, searchFile, replaceFile, outputFile);
+				replaceLangInFiles(sourceFile, searchFile, replaceFile, outputFile);
 			}
 			
 		});
@@ -253,6 +263,108 @@ public class ReplaceUI extends Application {
 		MessageFormat formatter = new MessageFormat("");
 		formatter.setLocale(currentLocale);
 		return MessageFormat.format(getMessage(key), args);
+	}
+	
+	public void replaceLangInFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
+		//open the 3 files
+		if (!sourceFile.exists() || sourceFile == null){
+			logOutput(ReplaceUI.getMessage("source_does_not_exist", 
+					new Object[] {sourceFile.getName()}));
+			return;
+		}
+		else if (!searchLinesFile.exists()) {
+			logOutput(ReplaceUI.getMessage("search_does_not_exist", 
+					new Object[] {searchLinesFile.getName()}));
+			return;
+		}
+		else if (!replaceLinesFile.exists()) {
+			logOutput(ReplaceUI.getMessage("replacement_does_not_exist", 
+					new Object[] {replaceLinesFile.getName()}));
+			return;
+		}
+		
+		try {
+			Files.copy(sourceFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+		catch (Exception e) {
+			logOutput(e.getMessage());;
+		}
+		
+		int searchLinesRows = 0;
+		int replaceLinesRows = 0;
+		
+		//opening files, checking;
+		try {
+			Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
+			Scanner searchLinesScanner = new Scanner(searchLinesFile);
+			
+			//if number of lines in files don't match, stop	
+			logOutput(ReplaceUI.getMessage("checking_files"));
+			while (replaceLinesScanner.hasNext()) {
+				replaceLinesRows++;
+				replaceLI.add(replaceLinesScanner.nextLine());
+			}
+			while (searchLinesScanner.hasNext()) {
+				searchLinesRows++;
+				searchLI.add(searchLinesScanner.nextLine());
+			}
+			searchLinesScanner.close();
+			replaceLinesScanner.close();
+			
+			if (searchLinesRows == 0) {
+				logOutput((ReplaceUI.getMessage("search_file_empty")));
+				return;
+			}
+			else if (searchLinesRows != replaceLinesRows) {
+				logOutput(ReplaceUI.getMessage("file_not_equal_length", 
+						new Object[] {searchLinesRows, replaceLinesRows} ));
+				return;
+			}
+
+			logOutput(ReplaceUI.getMessage("files_checked"));
+			
+			
+			//for every line N in LEFT:
+			//if LEFT found in ORIGINAL, substitute with RIGHT, subCount++
+			//if LEFT not found, search for RIGHT, alreadySubbedCount++
+			//if RIGHT also not found, add N, LEFT to dictionary
+			//print subCount, alreadySubbedCount
+			logOutput(ReplaceUI.getMessage("begin_replacement"));
+			int subCount = 0;	//lines replaced
+			int alreadySubbedCount = 0; //lines already replaced
+			int notFoundCount = 0;	//neither searched lines nor replacement found
+			Scanner sourceScanner = new Scanner(sourceFile);
+			while (sourceScanner.hasNext()) {
+				sourceLI.add(sourceScanner.nextLine());
+			}
+			sourceScanner.close();
+			
+			sourceLI = LinesIndex.replaceLoop(searchLI, sourceLI, replaceLI);
+			
+			//output to file
+			PrintWriter printWriter = new PrintWriter(outputFile);
+			boolean firstLine = true;
+			ListIterator<Line> sourceIter = sourceLI.listIterator();
+			while (sourceIter.hasNext()) {
+				if (firstLine) {
+					firstLine = false;
+				}
+				else {
+					printWriter.append("\n");
+				}
+				printWriter.append(sourceIter.next().getRaw());
+			}
+			printWriter.close();
+
+			replaceLinesScanner.close();
+			searchLinesScanner.close();
+			logOutput((ReplaceUI.getMessage("replaced", new Object[] {subCount})));
+			logOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadySubbedCount}));
+			logOutput(ReplaceUI.getMessage("not_found", new Object[] {notFoundCount}));
+			
+			} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			}
 	}
 }
 

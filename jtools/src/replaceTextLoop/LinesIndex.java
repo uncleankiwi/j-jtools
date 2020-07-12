@@ -35,12 +35,20 @@ public class LinesIndex {
 		return LI.listIterator();
 	}
 	
-	public static void replaceLoop(LinesIndex searchIndex, LinesIndex sourceIndex, LinesIndex replaceIndex) {
+	public static LinesIndex replaceLoop(LinesIndex searchIndex, LinesIndex sourceIndex, LinesIndex replaceIndex) {
 		int totalReplacedCount = 0;	//number of sourceIndex lines replaced
 		int replacedCount = 0; //searchIndex lines that have had at least 1 replacement
 		int alreadyReplacedCount = 0;
 		int noMatchCount = 0;
 		
+		searchIndex.indexQuotes();
+		searchIndex.indexVars();
+		
+		replaceIndex.indexVars();
+		replaceIndex.indexQuotes();
+		
+		sourceIndex.indexQuotes();
+
 		//for each SEARCHINDEX line
 		ListIterator<Line> searchIter = searchIndex.listIterator();
 		ListIterator<Line> replaceIter = replaceIndex.listIterator();
@@ -68,7 +76,9 @@ public class LinesIndex {
 						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
 					}
 					else {
-						logOutput("Failed to replace variables in replace line.");
+						logOutput("Failed to replace variables in replace line. Search line variable count (" +
+								searchLine.varCount() + ") does not match source variable count (" + replaceLine.varCount() +
+								")");
 					}
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
@@ -141,18 +151,19 @@ public class LinesIndex {
 		*/	
 		
 		logOutput(replacedCount + "/" + searchIndex.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
-				"in the source file." +
+				" times in the source file." +
 				"\nAlready replaced: " + alreadyReplacedCount +
 				"\nNo matches: " + noMatchCount);
+		return sourceIndex;
 	}
 	
-	public void setLogOutputListener(LogInterface newListener) {
+	public static void setLogOutputListener(LogInterface newListener) {
 		logListener = newListener;
 	}
 	
 	private static void logOutput(String msg) {
 		if (logListener != null) {
-			logListener.logOutput(msg);
+			logListener.onLogOutput(msg);
 		}
 	}
 	
