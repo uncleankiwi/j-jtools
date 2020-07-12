@@ -104,17 +104,17 @@ public class Line {
 				nonVarStart = 0;
 			}
 			else {
-				nonVarStart = searchVarEnds.get(i - 1) + 1;
+				nonVarStart = searchVarEnds.get(i - 1);
 			}
 			
-			if (i == searchLine.varCount + 1) {
+			if (i == searchLine.varCount) {
 				nonVarEnd = searchNoSpaces.length() - 1;
 			}
 			else {
-				nonVarEnd = searchVarStarts.get(i) - 1;
+				nonVarEnd = searchVarStarts.get(i);
 			}
 			
-			nonVarList.add(searchNoSpaces.substring(nonVarStart, nonVarEnd));	//TODO 4th element oob
+			nonVarList.add(searchNoSpaces.substring(nonVarStart, nonVarEnd));
 		}		
 		
 		//string0 var0 string1 var1 string2
