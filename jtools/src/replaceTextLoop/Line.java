@@ -138,7 +138,7 @@ public class Line {
 		this.varList = new LinkedList<String>();
 		for (int i = 0; i < searchLine.varCount(); i++) {
 			this.varList.add(sourceNoSpaces.substring(
-					sourceNonVarEnds.get(i) + 1, sourceNonVarStarts.get(i + 1) - 1));
+					sourceNonVarEnds.get(i), sourceNonVarStarts.get(i + 1)));
 			this.varCount++;
 		}
 		
@@ -155,7 +155,7 @@ public class Line {
 	
 	//search replace line with searchLine's varList, replace with sourceLine's varList
 	public static boolean tryReplace(Line searchLine, Line replaceLine, Line sourceLine) {
-		if (searchLine.varCount() != replaceLine.varCount() || searchLine.varCount() != sourceLine.varCount()) {
+		if (searchLine.varCount() != sourceLine.varCount()) {
 			System.out.println("syso search line vars: " + searchLine.varCount());
 			System.out.println("replace line vars: " + replaceLine.varCount());
 			System.out.println("source line vars: " + sourceLine.varCount());

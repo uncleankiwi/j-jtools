@@ -43,12 +43,12 @@ public class RTLtest {
 		
 		boolean pass;
 		src1.indexUnknownVars(search1);
-		System.out.println(src1.getVars());
+		System.out.println("source vars: " + src1.getVars());
 		pass = Line.tryReplace(search1, replace1, src1);
 		System.out.println("try replace: " + pass);
 		src1.setRaw(replace1.getRaw());
-		System.out.println(replace1.getRaw());
-		System.out.println(src1.getRaw());
+		System.out.println("new replace raw: " + replace1.getRaw());
+		System.out.println("new source raw: " + src1.getRaw());
 		
 	}
 
