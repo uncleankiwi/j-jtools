@@ -78,7 +78,7 @@ public class LinesIndex {
 					else {
 						logOutput("Failed to replace variables in replace line. Search line variable count (" +
 								searchLine.varCount() + ") does not match source variable count (" + replaceLine.varCount() +
-								")");
+								")");//TODO
 					}
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
@@ -158,10 +158,9 @@ public class LinesIndex {
 					search 
 		*/	
 		
-		logOutput(replacedCount + "/" + searchIndex.LI.size() + " search terms found and replaced a total of " + totalReplacedCount +
-				" times in the source file." +
-				"\nAlready replaced: " + alreadyReplacedCount +
-				"\nNo matches: " + noMatchCount);
+		logOutput((ReplaceUI.getMessage("replaced", new Object[] {replacedCount, searchIndex.LI.size(), totalReplacedCount})));
+		logOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadyReplacedCount}));
+		logOutput(ReplaceUI.getMessage("not_found", new Object[] {noMatchCount}));
 		return sourceIndex;
 	}
 	
