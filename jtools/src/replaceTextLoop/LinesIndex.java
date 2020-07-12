@@ -85,12 +85,13 @@ public class LinesIndex {
 					if (pass) {
 						sourceLine.setRaw(replaceLine.getRaw());
 						found = true;
+						totalReplacedCount++;
 					}
 				}	
 			}
 			
 			
-			//if no matches
+			//if no matches, search for replaced line
 			if (!found) {
 				//for each SOURCEINDEX line
 				sourceIter = sourceIndex.listIterator();
@@ -98,12 +99,19 @@ public class LinesIndex {
 					Line sourceLine = sourceIter.next();
 					if (Line.quotesMatch(replaceLine, sourceLine)) {
 						alreadyReplacedCount++;
-					}
-					else {
-						noMatchCount++;
-						logOutput("Line " + lineNumber + " not found: " + searchLine.getRaw());
+						found = true;;
 					}
 				}
+			}
+			
+			if (found) {
+				//this search line was found at least once in entire source file
+				replacedCount++;
+			}
+			else {
+				//if neither search line nor replacement were found, display in log
+				noMatchCount++;
+				logOutput("Line " + lineNumber + " not found: " + searchLine.getRaw());
 			}
 			
 		}

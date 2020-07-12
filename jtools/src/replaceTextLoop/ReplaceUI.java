@@ -361,6 +361,7 @@ public class ReplaceUI extends Application {
 			logOutput((ReplaceUI.getMessage("replaced", new Object[] {subCount})));
 			logOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadySubbedCount}));
 			logOutput(ReplaceUI.getMessage("not_found", new Object[] {notFoundCount}));
+			logOutput("-------------------------------");
 			
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();
