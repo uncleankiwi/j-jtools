@@ -75,6 +75,17 @@ public class ReplaceUI extends Application {
 	private LinesIndex replaceLI = new LinesIndex();
 	private LinesIndex sourceLI = new LinesIndex();
 	
+	//both modes use fileCheck and put the source into a LinesIndex
+	//differences:
+	//LANG replaces lang() in source.
+	//		Search and replace files are indexed into LinesIndex.
+	//		Mode activated by opening two .txt files.
+	//DESC replaces item descriptions in source.
+	//		Search and replace files are indexed into Desc
+	//		Mode activated by opening two .tsv files.
+	private enum Mode {LANG, DESC};
+	private Mode mode;
+	
 	@Override
 	public void start(Stage pStage) throws Exception {
 		//internationalisation stuff
@@ -233,11 +244,16 @@ public class ReplaceUI extends Application {
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
-				
+				boolean pass = true;
 				//TODO fileCheck
 				
+				pass = fileCheck(sourceFile, searchFile, replaceFile, outputFile);
+				
 				//extension case selection
-				replaceLangInFiles(sourceFile, searchFile, replaceFile, outputFile);
+				if (pass) {
+					replaceLangInFiles(sourceFile, searchFile, replaceFile, outputFile);
+				}
+				
 			}
 			
 		});
@@ -269,41 +285,41 @@ public class ReplaceUI extends Application {
 		return MessageFormat.format(getMessage(key), args);
 	}
 	
-	public void replaceLangInFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
+	public boolean fileCheck(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
 		//open the 3 files
 		if (!sourceFile.exists() || sourceFile == null){
-			logOutput(ReplaceUI.getMessage("source_does_not_exist", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.source_does_not_exist", 
 					new Object[] {sourceFile.getName()}));
-			return;
+			return false;
 		}
 		else if (!searchLinesFile.exists()) {
-			logOutput(ReplaceUI.getMessage("search_does_not_exist", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.search_does_not_exist", 
 					new Object[] {searchLinesFile.getName()}));
-			return;
+			return false;
 		}
 		else if (!replaceLinesFile.exists()) {
-			logOutput(ReplaceUI.getMessage("replacement_does_not_exist", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.replacement_does_not_exist", 
 					new Object[] {replaceLinesFile.getName()}));
-			return;
+			return false;
 		}
+		
 		
 		try {
 			Files.copy(sourceFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (Exception e) {
-			logOutput(e.getMessage());;
+			logOutput(e.getMessage());
+			return false;
 		}
 		
 		int searchLinesRows = 0;
 		int replaceLinesRows = 0;
-		
-		//opening files, checking;
 		try {
 			Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
 			Scanner searchLinesScanner = new Scanner(searchLinesFile);
 			
 			//if number of lines in files don't match, stop	
-			logOutput(ReplaceUI.getMessage("checking_files"));
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			while (replaceLinesScanner.hasNext()) {
 				replaceLinesRows++;
 				replaceLI.add(replaceLinesScanner.nextLine());
@@ -317,17 +333,25 @@ public class ReplaceUI extends Application {
 			
 			if (searchLinesRows == 0) {
 				logOutput((ReplaceUI.getMessage("search_file_empty")));
-				return;
+				return false;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
 				logOutput(ReplaceUI.getMessage("file_not_equal_length", 
 						new Object[] {searchLinesRows, replaceLinesRows} ));
-				return;
+				return false;
 			}
+			
+			//TODO check if extensions are both .txt or both .tsv
 
 			logOutput(ReplaceUI.getMessage("files_checked"));
-			
-			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public void replaceLangInFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
+		try {	
 			//for every line N in LEFT:
 			//if LEFT found in ORIGINAL, substitute with RIGHT, subCount++
 			//if LEFT not found, search for RIGHT, alreadySubbedCount++
@@ -360,8 +384,6 @@ public class ReplaceUI extends Application {
 			}
 			printWriter.close();
 
-			replaceLinesScanner.close();
-			searchLinesScanner.close();
 			logOutput((ReplaceUI.getMessage("replaced", new Object[] {subCount})));
 			logOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadySubbedCount}));
 			logOutput(ReplaceUI.getMessage("not_found", new Object[] {notFoundCount}));
