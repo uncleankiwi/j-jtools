@@ -95,7 +95,7 @@ public class ReplaceUI extends Application {
 		Menu mnuLang = new Menu(getMessage("ReplaceUI.UI.language"));
 		
 		MenuItem mnuEn = new MenuItem(
-				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", enLocale).getString("lang_name"));
+				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", enLocale).getString("ReplaceUI.UI.lang_name"));
 		mnuEn.setOnAction(e -> {
 			currentLocale = enLocale;
 			ReplaceUI rui = new ReplaceUI();
@@ -106,7 +106,7 @@ public class ReplaceUI extends Application {
 			}
 		});
 		MenuItem mnuJa = new MenuItem(
-				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", jaLocale).getString("lang_name"));
+				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", jaLocale).getString("ReplaceUI.UI.lang_name"));
 		mnuJa.setOnAction(e -> {
 			currentLocale = jaLocale;
 			ReplaceUI rui = new ReplaceUI();
@@ -254,7 +254,7 @@ public class ReplaceUI extends Application {
 				
 		Scene scene = new Scene(uiWrapWrapper);
 		pStage.setScene(scene);
-		pStage.setTitle(getMessage("window_title"));
+		pStage.setTitle(getMessage("ReplaceUI.UI.window_title"));
 		pStage.setResizable(false);
 		pStage.show();
 	}

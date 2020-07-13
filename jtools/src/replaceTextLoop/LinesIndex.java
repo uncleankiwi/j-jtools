@@ -76,9 +76,7 @@ public class LinesIndex {
 						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
 					}
 					else {
-						logOutput("Failed to replace variables in replace line. Search line variable count (" +
-								searchLine.varCount() + ") does not match source variable count (" + replaceLine.varCount() +
-								")");//TODO
+						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {searchLine.varCount(), replaceLine.varCount()}));
 					}
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
