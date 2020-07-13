@@ -209,19 +209,19 @@ public class ReplaceUI extends Application {
 			//check if all files have been specified
 			if (sourceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("specify_source"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_source"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (searchFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("specify_search"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_search"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (replaceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("specify_replacement"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_replacement"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
@@ -233,6 +233,10 @@ public class ReplaceUI extends Application {
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
+				
+				//TODO fileCheck
+				
+				//extension case selection
 				replaceLangInFiles(sourceFile, searchFile, replaceFile, outputFile);
 			}
 			
