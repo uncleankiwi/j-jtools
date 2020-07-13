@@ -111,7 +111,8 @@ public class LinesIndex {
 			else {
 				//if neither search line nor replacement were found, display in log
 				noMatchCount++;
-				logOutput("Line " + lineNumber + " not found: " + searchLine.getRaw());
+				logOutput(ReplaceUI.getMessage("LinesIndex.no_match", new Object[] {lineNumber, searchLine.getRaw()}));
+
 			}
 			
 		}
@@ -158,9 +159,9 @@ public class LinesIndex {
 					search 
 		*/	
 		
-		logOutput((ReplaceUI.getMessage("replaced", new Object[] {replacedCount, searchIndex.LI.size(), totalReplacedCount})));
-		logOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadyReplacedCount}));
-		logOutput(ReplaceUI.getMessage("not_found", new Object[] {noMatchCount}));
+		logOutput((ReplaceUI.getMessage("LinesIndex.replaced", new Object[] {replacedCount, searchIndex.LI.size(), totalReplacedCount})));
+		logOutput(ReplaceUI.getMessage("LinesIndex.already_replaced", new Object[] {alreadyReplacedCount}));
+		logOutput(ReplaceUI.getMessage("LinesIndex.not_found", new Object[] {noMatchCount}));
 		return sourceIndex;
 	}
 	

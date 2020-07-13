@@ -7,8 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -66,10 +68,10 @@ public class ReplaceUI extends Application {
 	private VBox filesBox = new VBox();
 
 	private Label txtSaveFile = new Label("");
-	private Label txtSaveInstr = new Label(getMessage("file_saved_as"));
+	private Label txtSaveInstr = new Label(getMessage("ReplaceUI.UI.file_saved_as"));
 	
 	private VBox startBox = new VBox();
-	private Button btnStart = new Button(getMessage("begin"));
+	private Button btnStart = new Button(getMessage("ReplaceUI.UI.begin"));
 	
 	private LinesIndex searchLI = new LinesIndex();
 	private LinesIndex replaceLI = new LinesIndex();
@@ -90,7 +92,7 @@ public class ReplaceUI extends Application {
 	public void start(Stage pStage) throws Exception {
 		//internationalisation stuff
 		MenuBar menuBar = new MenuBar();
-		Menu mnuLang = new Menu(getMessage("language"));
+		Menu mnuLang = new Menu(getMessage("ReplaceUI.UI.language"));
 		
 		MenuItem mnuEn = new MenuItem(
 				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", enLocale).getString("lang_name"));
@@ -125,9 +127,9 @@ public class ReplaceUI extends Application {
 		txtLog.setMinSize(480, 300);
 		txtLog.setStyle("-fx-border-color: black;");
 		
-		FileBox sourceBox = new FileBox(getMessage("source_file"), pStage);
-		FileBox searchBox = new FileBox(getMessage("search_source_with"), pStage);
-		FileBox replaceBox = new FileBox(getMessage("replace_source_with"), pStage);
+		FileBox sourceBox = new FileBox(getMessage("ReplaceUI.UI.source_file"), pStage);
+		FileBox searchBox = new FileBox(getMessage("ReplaceUI.UI.search_source_with"), pStage);
+		FileBox replaceBox = new FileBox(getMessage("ReplaceUI.UI.replace_source_with"), pStage);
 
 
 		uiWrapper.setPadding(new Insets(5));
@@ -141,7 +143,7 @@ public class ReplaceUI extends Application {
 		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
 		filesBox.setAlignment(Pos.CENTER_LEFT);
 		
-		LinesIndex.setLogOutputListener(new LogInterface() {	//TODO remove
+		LinesIndex.setLogOutputListener(new LogInterface() {
 			@Override
 			public void onLogOutput(String msg) {
 				logOutput(msg);
@@ -157,20 +159,11 @@ public class ReplaceUI extends Application {
 				
 				//getting filename of source to generate output file's name
 				String sourceFull = sourceFile.toPath().toString();
-				String name = "";
-				String extension = "";	//includes "."
+				String[] filenameArray = getFileNameAndExtension(sourceFull);
 				
-				Optional<String> optional = Optional.ofNullable(sourceFull)
-						.filter(f -> f.contains("."));
+				String name = filenameArray[0];
+				String extension = filenameArray[1];	//includes "."
 				
-				if (sourceFull.contains(".")) {
-					name = optional.map(f -> f.substring(0, sourceFull.lastIndexOf("."))).get();
-					extension = optional.map(f -> f.substring(sourceFull.lastIndexOf("."))).get();
-				}
-				else {
-					name = sourceFull;
-				}
-
 				//try to append date
 				String date = LocalDate.now().toString();
 				outputFile = new File(name + " " + date + extension);
@@ -239,19 +232,20 @@ public class ReplaceUI extends Application {
 			else if (outputFile == null) {
 				//this shouldn't happen
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("cannot_output"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart.cannot_output"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
 				boolean pass = true;
-				//TODO fileCheck
-				
-				pass = fileCheck(sourceFile, searchFile, replaceFile, outputFile);
+				pass = fileCheck();
 				
 				//extension case selection
 				if (pass) {
-					replaceLangInFiles(sourceFile, searchFile, replaceFile, outputFile);
+					logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement"));
+					
+					
+					this.sourceLI = LinesIndex.replaceLoop(this.searchLI, this.sourceLI, this.replaceLI);
 				}
 				
 			}
@@ -274,6 +268,23 @@ public class ReplaceUI extends Application {
 		txtLog.setText(log);
 	}
 	
+	public static String[] getFileNameAndExtension(String filename){
+		String name = "";
+		String extension = "";	//includes "."
+		
+		Optional<String> optional = Optional.ofNullable(filename)
+				.filter(f -> f.contains("."));
+		
+		if (filename.contains(".")) {
+			name = optional.map(f -> f.substring(0, filename.lastIndexOf("."))).get();
+			extension = optional.map(f -> f.substring(filename.lastIndexOf("."))).get();
+		}
+		else {
+			name = filename;
+		};
+		return new String[] {name, extension};
+	}
+	
 	public static String getMessage(String key) {
 		return ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", currentLocale).getString(key);
 	}
@@ -285,38 +296,59 @@ public class ReplaceUI extends Application {
 		return MessageFormat.format(getMessage(key), args);
 	}
 	
-	public boolean fileCheck(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
+	public boolean fileCheck() {
+		this.searchLI = new LinesIndex();
+		this.replaceLI = new LinesIndex();
+		this.sourceLI = new LinesIndex();
+		
 		//open the 3 files
-		if (!sourceFile.exists() || sourceFile == null){
+		if (!this.sourceFile.exists() || this.sourceFile == null){
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.source_does_not_exist", 
-					new Object[] {sourceFile.getName()}));
+					new Object[] {this.sourceFile.getName()}));
 			return false;
 		}
-		else if (!searchLinesFile.exists()) {
+		else if (!this.searchFile.exists()) {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.search_does_not_exist", 
-					new Object[] {searchLinesFile.getName()}));
+					new Object[] {this.searchFile.getName()}));
 			return false;
 		}
-		else if (!replaceLinesFile.exists()) {
+		else if (!this.replaceFile.exists()) {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.replacement_does_not_exist", 
-					new Object[] {replaceLinesFile.getName()}));
+					new Object[] {this.replaceFile.getName()}));
 			return false;
 		}
-		
-		
+				
 		try {
-			Files.copy(sourceFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(this.sourceFile.toPath(), this.outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (Exception e) {
 			logOutput(e.getMessage());
 			return false;
 		}
 		
+		//checking extensions and switching modes
+		this.mode = null;
+		String searchExtension = getFileNameAndExtension(this.sourceFile.toPath().toString())[1];
+		String replaceExtension = getFileNameAndExtension(this.replaceFile.toPath().toString())[1];
+		if (searchExtension == ".txt" && replaceExtension == ".txt") {
+			this.mode = Mode.LANG;
+		}
+		else if (searchExtension == ".tsv" && replaceExtension == ".tsv"){
+			this.mode = Mode.DESC;
+		}
+		else {
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.incorrect_file_extensions", 
+					new Object[] {searchExtension, replaceExtension}));
+			return false;
+		}
+		
+		
+		//parse files
 		int searchLinesRows = 0;
 		int replaceLinesRows = 0;
 		try {
-			Scanner replaceLinesScanner = new Scanner(replaceLinesFile);
-			Scanner searchLinesScanner = new Scanner(searchLinesFile);
+			Scanner replaceLinesScanner = new Scanner(this.replaceFile);
+			Scanner searchLinesScanner = new Scanner(this.searchFile);
 			
 			//if number of lines in files don't match, stop	
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
@@ -332,47 +364,36 @@ public class ReplaceUI extends Application {
 			replaceLinesScanner.close();
 			
 			if (searchLinesRows == 0) {
-				logOutput((ReplaceUI.getMessage("search_file_empty")));
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.search_file_empty")));
 				return false;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
-				logOutput(ReplaceUI.getMessage("file_not_equal_length", 
+				logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.file_not_equal_length", 
 						new Object[] {searchLinesRows, replaceLinesRows} ));
 				return false;
 			}
 			
-			//TODO check if extensions are both .txt or both .tsv
-
-			logOutput(ReplaceUI.getMessage("files_checked"));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public void replaceLangInFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
-		try {	
-			//for every line N in LEFT:
-			//if LEFT found in ORIGINAL, substitute with RIGHT, subCount++
-			//if LEFT not found, search for RIGHT, alreadySubbedCount++
-			//if RIGHT also not found, add N, LEFT to dictionary
-			//print subCount, alreadySubbedCount
-			logOutput(ReplaceUI.getMessage("begin_replacement"));
-			int subCount = 0;	//lines replaced
-			int alreadySubbedCount = 0; //lines already replaced
-			int notFoundCount = 0;	//neither searched lines nor replacement found
 			Scanner sourceScanner = new Scanner(sourceFile);
 			while (sourceScanner.hasNext()) {
 				sourceLI.add(sourceScanner.nextLine());
 			}
 			sourceScanner.close();
 			
-			sourceLI = LinesIndex.replaceLoop(searchLI, sourceLI, replaceLI);
-			
-			//output to file
-			PrintWriter printWriter = new PrintWriter(outputFile);
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked"));
+			return true;
+		} catch (Exception e) {
+			logOutput(e.getMessage());
+			return false;
+		}
+	}
+	
+	
+	//output to file
+	public boolean outputSource() {
+		try {
+			PrintWriter printWriter = new PrintWriter(this.outputFile);
 			boolean firstLine = true;
-			ListIterator<Line> sourceIter = sourceLI.listIterator();
+			ListIterator<Line> sourceIter = this.sourceLI.listIterator();
 			while (sourceIter.hasNext()) {
 				if (firstLine) {
 					firstLine = false;
@@ -383,15 +404,14 @@ public class ReplaceUI extends Application {
 				printWriter.append(sourceIter.next().getRaw());
 			}
 			printWriter.close();
-
-			logOutput((ReplaceUI.getMessage("replaced", new Object[] {subCount})));
-			logOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadySubbedCount}));
-			logOutput(ReplaceUI.getMessage("not_found", new Object[] {notFoundCount}));
-			logOutput(ReplaceUI.getMessage("end_replacement"));
 			
-			} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			}
+			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource.end_replacement"));
+			return true;
+		} catch (Exception e) {
+			logOutput(e.getMessage());
+			return false;
+		}
+
 	}
 }
 
