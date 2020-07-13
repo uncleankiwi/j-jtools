@@ -1,16 +1,13 @@
 package replaceTextLoop;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -76,6 +73,8 @@ public class ReplaceUI extends Application {
 	private LinesIndex searchLI = new LinesIndex();
 	private LinesIndex replaceLI = new LinesIndex();
 	private LinesIndex sourceLI = new LinesIndex();
+	private ItemDescIndex searchDI = new ItemDescIndex();
+	private ItemDescIndex replaceDI = new ItemDescIndex();
 	
 	//both modes use fileCheck and put the source into a LinesIndex
 	//differences:
@@ -244,8 +243,21 @@ public class ReplaceUI extends Application {
 				if (pass) {
 					logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement"));
 					
+					if (this.mode == Mode.LANG) {
+						this.sourceLI = LinesIndex.replaceLoop(this.searchLI, this.sourceLI, this.replaceLI);
+					}
+					else if (this.mode == Mode.DESC) {
+						this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, searchDI, replaceDI);
+					}
+					else {
+						pass = false;
+					}
 					
-					this.sourceLI = LinesIndex.replaceLoop(this.searchLI, this.sourceLI, this.replaceLI);
+				}
+				
+				//output to file
+				if (pass) {
+					pass = outputSource();
 				}
 				
 			}
@@ -300,6 +312,8 @@ public class ReplaceUI extends Application {
 		this.searchLI = new LinesIndex();
 		this.replaceLI = new LinesIndex();
 		this.sourceLI = new LinesIndex();
+		this.searchDI = new ItemDescIndex();
+		this.replaceDI = new ItemDescIndex();
 		
 		//open the 3 files
 		if (!this.sourceFile.exists() || this.sourceFile == null){
@@ -354,11 +368,22 @@ public class ReplaceUI extends Application {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			while (replaceLinesScanner.hasNext()) {
 				replaceLinesRows++;
-				replaceLI.add(replaceLinesScanner.nextLine());
+				
+				if (this.mode == Mode.DESC) {
+					replaceDI.add(replaceLinesScanner.nextLine());
+				}
+				else if (this.mode == Mode.LANG) {
+					replaceLI.add(replaceLinesScanner.nextLine());
+				}				
 			}
 			while (searchLinesScanner.hasNext()) {
 				searchLinesRows++;
-				searchLI.add(searchLinesScanner.nextLine());
+				if (this.mode == Mode.DESC) {
+					searchDI.add(searchLinesScanner.nextLine());
+				}
+				else if (this.mode == Mode.LANG) {
+					searchLI.add(searchLinesScanner.nextLine());
+				}				
 			}
 			searchLinesScanner.close();
 			replaceLinesScanner.close();

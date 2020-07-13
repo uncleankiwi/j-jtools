@@ -1,6 +1,7 @@
 package replaceTextLoop;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 //each ItemDesc in this holds the descriptions for 1 item
 public class ItemDescIndex {
@@ -8,6 +9,10 @@ public class ItemDescIndex {
 
 	public void add(String newItem) {
 		idi.add(new ItemDesc(newItem));
+	}
+	
+	public ListIterator<ItemDesc> listIterator(){
+		return idi.listIterator();
 	}
 	
 	public static LinesIndex replaceLoop(LinesIndex sourceIndex, ItemDescIndex searchDescIndex, ItemDescIndex replaceDescIndex) {
