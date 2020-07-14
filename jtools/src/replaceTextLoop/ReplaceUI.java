@@ -73,8 +73,7 @@ public class ReplaceUI extends Application {
 	private LinesIndex searchLI = new LinesIndex();
 	private LinesIndex replaceLI = new LinesIndex();
 	private LinesIndex sourceLI = new LinesIndex();
-	private ItemDescIndex searchDI = new ItemDescIndex();
-	private ItemDescIndex replaceDI = new ItemDescIndex();
+	private ItemDescIndex itemDI = new ItemDescIndex();	//first item is used to search, other items for replacing
 	
 	//both modes use fileCheck and put the source into a LinesIndex
 	//differences:
@@ -247,7 +246,7 @@ public class ReplaceUI extends Application {
 						this.sourceLI = LinesIndex.replaceLoop(this.searchLI, this.sourceLI, this.replaceLI);
 					}
 					else if (this.mode == Mode.DESC) {
-						this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, searchDI, replaceDI);
+						this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, itemDI);
 					}
 					else {
 						pass = false;
@@ -312,9 +311,8 @@ public class ReplaceUI extends Application {
 		this.searchLI = new LinesIndex();
 		this.replaceLI = new LinesIndex();
 		this.sourceLI = new LinesIndex();
-		this.searchDI = new ItemDescIndex();
-		this.replaceDI = new ItemDescIndex();
-		
+		this.itemDI = new ItemDescIndex();
+
 		//open the 3 files
 		if (!this.sourceFile.exists() || this.sourceFile == null){
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.source_does_not_exist", 
@@ -370,7 +368,7 @@ public class ReplaceUI extends Application {
 				replaceLinesRows++;
 				
 				if (this.mode == Mode.DESC) {
-					replaceDI.add(replaceLinesScanner.nextLine());
+					//no searchDI or replaceDI. combined into itemDI.
 				}
 				else if (this.mode == Mode.LANG) {
 					replaceLI.add(replaceLinesScanner.nextLine());
@@ -379,7 +377,7 @@ public class ReplaceUI extends Application {
 			while (searchLinesScanner.hasNext()) {
 				searchLinesRows++;
 				if (this.mode == Mode.DESC) {
-					searchDI.add(searchLinesScanner.nextLine());
+					itemDI.add(searchLinesScanner.nextLine());
 				}
 				else if (this.mode == Mode.LANG) {
 					searchLI.add(searchLinesScanner.nextLine());

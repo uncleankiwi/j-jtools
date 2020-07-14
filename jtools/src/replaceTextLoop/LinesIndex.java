@@ -115,48 +115,6 @@ public class LinesIndex {
 			
 		}
 		
-	/*
-	 
-	 	for each SEARCHINDEX line,
-	 		for each SOURCEINDEX line
-		 		if match SOURCEINDEX line
-		 			find SOURCEINDEX vars
-		 			replace REPLACEINDEX's line's vars
-		 			replace SOURCEINDEX line with REPLACEINDEX line	 		
-	 		if no matches,
-	 			for each SOURCEINDEX line
-	 				if match equivalent REPLACEINDEX line, alreadyReplacedCount++
-	 		
-	 
-	 
-		given SOURCEINDEX, REPLACEINDEX
-			for each SEARCHINDEX line, 
-				1. check each sourceIndex quote list to see if equal
-				2. quotes equal: 
-					0. found = false
-					1. find sourceIndex line varList
-					2. check if varList = sourceIndex line varList
-					3. replace replaceIndex line rawText's vars. search this.varList, replace with sourceIndex VarList
-					4. replace sourceIndex line's rawText with replaceIndex line's rawText
-					5. totalReplacedCount++, found = true
-				?. if found = true, replacedCount++
-				3. no match:
-					check each sourceIndex quote list with replaceIndex quoteList to see if equal
-					quotes equal: 
-						alreadyReplacedCount++
-					
-				for every quote list match found
-					create SOURCEINDEX line varList
-					if this line's varList.count != SOURCEINDEX's line's varList.count, go to next quote list match
-						if SEARCHINDEX line.varList.count != 0
-							for var in each SOURCEINDEX line.varList
-								search REPLACEINDEX line's rawText with SEARCHINDEX line var at same index, replace with this var
-						replace
-		
-				if no matches for this line
-					search 
-		*/	
-		
 		logOutput((ReplaceUI.getMessage("LinesIndex.replaced", new Object[] {replacedCount, searchIndex.LI.size(), totalReplacedCount})));
 		logOutput(ReplaceUI.getMessage("LinesIndex.already_replaced", new Object[] {alreadyReplacedCount}));
 		logOutput(ReplaceUI.getMessage("LinesIndex.not_found", new Object[] {noMatchCount}));
