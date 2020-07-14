@@ -6,14 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.Enumeration;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Scanner;
-import java.util.Set;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

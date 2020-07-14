@@ -4,12 +4,12 @@ package replaceTextLoop;
 public class RTLtest {
 
 	public static void main(String[] args) {
-		LinesIndex source = new LinesIndex();
-		LinesIndex search = new LinesIndex();
-		LinesIndex replace = new LinesIndex();
-		source.add("				var_653 = 0");
-		source.add("				var_124 = lang(\"生活講座担当、アジタリオ・ラーンクリスです。長いのでアジラーって呼んでください。みなさん、これからよろしく。\", \"Sorry, this is untranslated sentence.\")");
-		source.add("				var_246 = var_246 * (0 == 0) + (0 != 0) * 0");
+//		LinesIndex source = new LinesIndex();
+//		LinesIndex search = new LinesIndex();
+//		LinesIndex replace = new LinesIndex();
+//		source.add("				var_653 = 0");
+//		source.add("				var_124 = lang(\"生活講座担当、アジタリオ・ラーンクリスです。長いのでアジラーって呼んでください。みなさん、これからよろしく。\", \"Sorry, this is untranslated sentence.\")");
+//		source.add("				var_246 = var_246 * (0 == 0) + (0 != 0) * 0");
 		
 		
 		
