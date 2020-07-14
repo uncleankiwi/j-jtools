@@ -58,7 +58,7 @@ public class ItemDescIndex {
 				//if linesAfterFirstFound > 15, break	--> ItemDescIndex.fail_line_replace: Line {0} matched but could not replace: {1}
 				if (foundFirstDesc) linesAfterFirstFound++;
 				if (linesAfterFirstFound > 15) {
-					logOutput(ReplaceUI.getMessage("ItemDescIndex.fail_line_replace", new Object[] {lineNumber, item.getFirstDesc()}));
+					logOutput(ReplaceUI.getMessage("ItemDescIndex", "fail_line_replace", new Object[] {lineNumber, item.getFirstDesc()}));
 					break;
 				}
 			}
@@ -67,12 +67,12 @@ public class ItemDescIndex {
 				//noMatchCount++	-->ItemDescIndex.no_match: Line {0} not found: {1}
 			if (!foundFirstDesc) {
 				noMatchCount++;
-				logOutput(ReplaceUI.getMessage("ItemDescIndex.no_match", new Object[] {lineNumber, item.getFirstDesc()}));
+				logOutput(ReplaceUI.getMessage("ItemDescIndex", "no_match", new Object[] {lineNumber, item.getFirstDesc()}));
 			}
 		}
 		
-		logOutput(ReplaceUI.getMessage("ItemDescIndex.replaced", new Object[] {replacedCount, itemDescIndex.idi.size()}));
-		logOutput(ReplaceUI.getMessage("ItemDescIndex.not_found", new Object[] {noMatchCount, itemDescIndex.idi.size()}));
+		logOutput(ReplaceUI.getMessage("ItemDescIndex", "replaced", new Object[] {replacedCount, itemDescIndex.idi.size()}));
+		logOutput(ReplaceUI.getMessage("ItemDescIndex", "not_found", new Object[] {noMatchCount, itemDescIndex.idi.size()}));
 		return sourceIndex;
 	}
 	

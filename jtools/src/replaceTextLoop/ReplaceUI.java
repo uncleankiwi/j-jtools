@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.Enumeration;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Optional;
@@ -65,10 +66,10 @@ public class ReplaceUI extends Application {
 	private VBox filesBox = new VBox();
 
 	private Label txtSaveFile = new Label("");
-	private Label txtSaveInstr = new Label(getMessage("ReplaceUI.UI.file_saved_as"));
+	private Label txtSaveInstr = new Label(getMessage("ReplaceUI.UI.file_saved_as"));	//TODO
 	
 	private VBox startBox = new VBox();
-	private Button btnStart = new Button(getMessage("ReplaceUI.UI.begin"));
+	private Button btnStart = new Button(getMessage("ReplaceUI.UI", "begin"));
 	
 	private LinesIndex searchLI = new LinesIndex();
 	private LinesIndex replaceLI = new LinesIndex();
@@ -90,7 +91,7 @@ public class ReplaceUI extends Application {
 	public void start(Stage pStage) throws Exception {
 		//internationalisation stuff
 		MenuBar menuBar = new MenuBar();
-		Menu mnuLang = new Menu(getMessage("ReplaceUI.UI.language"));
+		Menu mnuLang = new Menu(getMessage("ReplaceUI.UI", "language"));
 		
 		MenuItem mnuEn = new MenuItem(
 				ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", enLocale).getString("ReplaceUI.UI.lang_name"));
@@ -125,9 +126,9 @@ public class ReplaceUI extends Application {
 		txtLog.setMinSize(480, 300);
 		txtLog.setStyle("-fx-border-color: black;");
 		
-		FileBox sourceBox = new FileBox(getMessage("ReplaceUI.UI.source_file"), pStage);
-		FileBox searchBox = new FileBox(getMessage("ReplaceUI.UI.search_source_with"), pStage);
-		FileBox replaceBox = new FileBox(getMessage("ReplaceUI.UI.replace_source_with"), pStage);
+		FileBox sourceBox = new FileBox(getMessage("ReplaceUI.UI", "source_file"), pStage);
+		FileBox searchBox = new FileBox(getMessage("ReplaceUI.UI", "search_source_with"), pStage);
+		FileBox replaceBox = new FileBox(getMessage("ReplaceUI.UI", "replace_source_with"), pStage);
 
 
 		uiWrapper.setPadding(new Insets(5));
@@ -211,26 +212,26 @@ public class ReplaceUI extends Application {
 			//check if all files have been specified
 			if (sourceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_source"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart", "specify_source"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (searchFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_search"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart", "specify_search"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (replaceFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_replacement"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart", "specify_replacement"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else if (outputFile == null) {
 				//this shouldn't happen
 				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("ReplaceUI.btnStart.cannot_output"));
+				alert.setHeaderText(getMessage("ReplaceUI.btnStart", "cannot_output"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
@@ -240,7 +241,7 @@ public class ReplaceUI extends Application {
 				
 				//extension case selection
 				if (pass) {
-					logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement"));
+					logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart", "begin_replacement"));
 					
 					if (this.mode == Mode.LANG) {
 						this.sourceLI = LinesIndex.replaceLoop(this.searchLI, this.sourceLI, this.replaceLI);
@@ -265,7 +266,7 @@ public class ReplaceUI extends Application {
 				
 		Scene scene = new Scene(uiWrapWrapper);
 		pStage.setScene(scene);
-		pStage.setTitle(getMessage("ReplaceUI.UI.window_title"));
+		pStage.setTitle(getMessage("ReplaceUI.UI", "window_title"));
 		pStage.setResizable(false);
 		pStage.show();
 	}
@@ -296,15 +297,26 @@ public class ReplaceUI extends Application {
 		return new String[] {name, extension};
 	}
 	
-	public static String getMessage(String key) {
+	public static String getMessage(String key) {	//TODO test
+		System.out.println("test");
+		Enumeration<String> en = ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", currentLocale).getKeys();
+		if (!en.hasMoreElements()) System.out.println("no ele");
+		while (en.hasMoreElements()) {
+			System.out.println("eleeee test: " + en.nextElement());
+		}
+
 		return ResourceBundle.getBundle("replaceTextLoop.ApplicationResources", currentLocale).getString(key);
 	}
 	
+	public static String getMessage(String bundle, String key) {
+		return ResourceBundle.getBundle("replaceTextLoop.ApplicationResources" + bundle, currentLocale).getString(key);
+	}
+	
 	//overloaded log printing method for putting in placeholders {0}, {1}, etc
-	public static String getMessage(String key, Object[] args) {
+	public static String getMessage(String bundle, String key, Object[] args) {
 		MessageFormat formatter = new MessageFormat("");
 		formatter.setLocale(currentLocale);
-		return MessageFormat.format(getMessage(key), args);
+		return MessageFormat.format(getMessage(bundle, key), args);
 	}
 	
 	public boolean fileCheck() {
@@ -315,17 +327,17 @@ public class ReplaceUI extends Application {
 
 		//open the 3 files
 		if (!this.sourceFile.exists() || this.sourceFile == null){
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.source_does_not_exist", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "source_does_not_exist", 
 					new Object[] {this.sourceFile.getName()}));
 			return false;
 		}
 		else if (!this.searchFile.exists()) {
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.search_does_not_exist", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "search_does_not_exist", 
 					new Object[] {this.searchFile.getName()}));
 			return false;
 		}
 		else if (!this.replaceFile.exists()) {
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.replacement_does_not_exist", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "replacement_does_not_exist", 
 					new Object[] {this.replaceFile.getName()}));
 			return false;
 		}
@@ -349,7 +361,7 @@ public class ReplaceUI extends Application {
 			this.mode = Mode.DESC;
 		}
 		else {
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.incorrect_file_extensions", 
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "incorrect_file_extensions", 
 					new Object[] {searchExtension, replaceExtension}));
 			return false;
 		}
@@ -363,7 +375,7 @@ public class ReplaceUI extends Application {
 			Scanner searchLinesScanner = new Scanner(this.searchFile);
 			
 			//if number of lines in files don't match, stop	
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "checking_files"));
 			while (replaceLinesScanner.hasNext()) {
 				replaceLinesRows++;
 				
@@ -387,11 +399,11 @@ public class ReplaceUI extends Application {
 			replaceLinesScanner.close();
 			
 			if (searchLinesRows == 0) {
-				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.search_file_empty")));
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck", "search_file_empty")));
 				return false;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
-				logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.file_not_equal_length", 
+				logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "file_not_equal_length", 
 						new Object[] {searchLinesRows, replaceLinesRows} ));
 				return false;
 			}
@@ -402,7 +414,7 @@ public class ReplaceUI extends Application {
 			}
 			sourceScanner.close();
 			
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked"));
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "files_checked"));
 			return true;
 		} catch (Exception e) {
 			logOutput(e.getMessage());
@@ -428,7 +440,7 @@ public class ReplaceUI extends Application {
 			}
 			printWriter.close();
 			
-			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource.end_replacement"));
+			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource", "end_replacement"));
 			return true;
 		} catch (Exception e) {
 			logOutput(e.getMessage());
