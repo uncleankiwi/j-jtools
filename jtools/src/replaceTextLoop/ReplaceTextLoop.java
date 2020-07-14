@@ -30,17 +30,17 @@ public class ReplaceTextLoop {
 	public static void replaceFiles(File sourceFile, File searchLinesFile, File replaceLinesFile, File outputFile) {
 		//open the 3 files
 		if (!sourceFile.exists() || sourceFile == null){
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "source_does_not_exist", 
+			listener.onLogOutput(ReplaceUI.getMessage("source_does_not_exist", 
 					new Object[] {sourceFile.getName()}));
 			return;
 		}
 		else if (!searchLinesFile.exists()) {
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "search_does_not_exist", 
+			listener.onLogOutput(ReplaceUI.getMessage("search_does_not_exist", 
 					new Object[] {searchLinesFile.getName()}));
 			return;
 		}
 		else if (!replaceLinesFile.exists()) {
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "replacement_does_not_exist", 
+			listener.onLogOutput(ReplaceUI.getMessage("replacement_does_not_exist", 
 					new Object[] {replaceLinesFile.getName()}));
 			return;
 		}
@@ -61,7 +61,7 @@ public class ReplaceTextLoop {
 			Scanner searchLinesScanner = new Scanner(searchLinesFile);
 			
 			//if number of lines in files don't match, stop	
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "checking_files"));
+			listener.onLogOutput(ReplaceUI.getMessage("checking_files"));
 			while (replaceLinesScanner.hasNext()) {
 				replaceLinesRows++;
 				replaceLL.add(replaceLinesScanner.nextLine());
@@ -74,16 +74,16 @@ public class ReplaceTextLoop {
 			replaceLinesScanner.close();
 			
 			if (searchLinesRows == 0) {
-				listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "search_file_empty"));
+				listener.onLogOutput(ReplaceUI.getMessage("search_file_empty"));
 				return;
 			}
 			else if (searchLinesRows != replaceLinesRows) {
-				listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "file_not_equal_length", 
+				listener.onLogOutput(ReplaceUI.getMessage("file_not_equal_length", 
 						new Object[] {searchLinesRows, replaceLinesRows} ));
 				return;
 			}
 
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "files_checked"));
+			listener.onLogOutput(ReplaceUI.getMessage("files_checked"));
 			
 			
 			//for every line N in LEFT:
@@ -91,7 +91,7 @@ public class ReplaceTextLoop {
 			//if LEFT not found, search for RIGHT, alreadySubbedCount++
 			//if RIGHT also not found, add N, LEFT to dictionary
 			//print subCount, alreadySubbedCount
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "begin_replacement"));
+			listener.onLogOutput(ReplaceUI.getMessage("begin_replacement"));
 			int subCount = 0;	//lines replaced
 			int alreadySubbedCount = 0; //lines already replaced
 			int notFoundCount = 0;	//neither searched lines nor replacement found
@@ -188,7 +188,7 @@ public class ReplaceTextLoop {
 		
 				//if still no match
 				if (!found) {
-					listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "no_match", new Object[] {searchString}));
+					listener.onLogOutput(ReplaceUI.getMessage("no_match", new Object[] {searchString}));
 					notFoundCount++;
 				}
 			}
@@ -210,9 +210,9 @@ public class ReplaceTextLoop {
 
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "replaced", new Object[] {subCount}));
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "already_replaced", new Object[] {alreadySubbedCount}));
-			listener.onLogOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck", "not_found", new Object[] {notFoundCount}));
+			listener.onLogOutput(ReplaceUI.getMessage("replaced", new Object[] {subCount}));
+			listener.onLogOutput(ReplaceUI.getMessage("already_replaced", new Object[] {alreadySubbedCount}));
+			listener.onLogOutput(ReplaceUI.getMessage("not_found", new Object[] {notFoundCount}));
 			
 			} catch (FileNotFoundException e) {
 			e.printStackTrace();

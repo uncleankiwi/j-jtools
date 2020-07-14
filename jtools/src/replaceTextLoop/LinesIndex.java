@@ -76,7 +76,7 @@ public class LinesIndex {
 						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
 					}
 					else {
-						logOutput(ReplaceUI.getMessage("LinesIndex", "fail_line_replace", new Object[] {
+						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
 								lineNumber, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
 						//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
 					}
@@ -111,15 +111,15 @@ public class LinesIndex {
 			else {
 				//if neither search line nor replacement were found, display in log
 				noMatchCount++;
-				logOutput(ReplaceUI.getMessage("LinesIndex", "no_match", new Object[] {lineNumber, searchLine.getRaw()}));
+				logOutput(ReplaceUI.getMessage("LinesIndex.no_match", new Object[] {lineNumber, searchLine.getRaw()}));
 
 			}
 			
 		}
 		
-		logOutput((ReplaceUI.getMessage("LinesIndex", "replaced", new Object[] {replacedCount, searchIndex.LI.size(), totalReplacedCount})));
-		logOutput(ReplaceUI.getMessage("LinesIndex", "already_replaced", new Object[] {alreadyReplacedCount, searchIndex.LI.size()}));
-		logOutput(ReplaceUI.getMessage("LinesIndex", "not_found", new Object[] {noMatchCount, searchIndex.LI.size()}));
+		logOutput((ReplaceUI.getMessage("LinesIndex.replaced", new Object[] {replacedCount, searchIndex.LI.size(), totalReplacedCount})));
+		logOutput(ReplaceUI.getMessage("LinesIndex.already_replaced", new Object[] {alreadyReplacedCount, searchIndex.LI.size()}));
+		logOutput(ReplaceUI.getMessage("LinesIndex.not_found", new Object[] {noMatchCount, searchIndex.LI.size()}));
 		return sourceIndex;
 	}
 	
