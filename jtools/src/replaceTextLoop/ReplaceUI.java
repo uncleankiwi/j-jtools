@@ -235,7 +235,7 @@ public class ReplaceUI extends Application {
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
-				boolean pass = true;
+				boolean pass = false;
 				pass = fileCheck();
 				
 				//extension case selection
@@ -342,10 +342,10 @@ public class ReplaceUI extends Application {
 		this.mode = null;
 		String searchExtension = getFileNameAndExtension(this.sourceFile.toPath().toString())[1];
 		String replaceExtension = getFileNameAndExtension(this.replaceFile.toPath().toString())[1];
-		if (searchExtension == ".txt" && replaceExtension == ".txt") {
+		if (searchExtension.equals(".txt") && replaceExtension.equals(".txt")) {
 			this.mode = Mode.LANG;
 		}
-		else if (searchExtension == ".tsv" && replaceExtension == ".tsv"){
+		else if (searchExtension.equals(".tsv") && replaceExtension.equals(".tsv")){
 			this.mode = Mode.DESC;
 		}
 		else {
