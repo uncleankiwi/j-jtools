@@ -164,15 +164,15 @@ public class ReplaceUI extends Application {
 				
 				//try to append date
 				String date = LocalDate.now().toString();
-				outputFile = new File(name + " " + date + extension);
-				if (outputFile.exists()){
-					//but if it exists, append date + N
-					int i = 1;
-					while (outputFile.exists()) {
-						outputFile = new File(name + " " + date + " " + i + extension);
-						i++;
-					}
-				}
+				outputFile = new File(name + " " + date + extension);//TODO uncomment
+//				if (outputFile.exists()){
+//					//but if it exists, append date + N
+//					int i = 1;
+//					while (outputFile.exists()) {
+//						outputFile = new File(name + " " + date + " " + i + extension);
+//						i++;
+//					}
+//				}
 
 				txtSaveFile.setText(outputFile.getName());
 			}

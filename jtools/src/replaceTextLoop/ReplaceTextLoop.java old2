@@ -4,12 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.regex.*;
 
-//defunct. not called. replaced by static methods in LinesIndex
 
 //output SUBSTITUTE
 //for each dictionary entry, print
@@ -22,6 +23,9 @@ import java.util.regex.*;
 //4. trigger child's listener somewhere. In child?
 
 public class ReplaceTextLoop {	
+	//list of chars to escape later
+	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", ".", "+", "*");
+	
 	//holds input files
 	private static LinkedList<String> sourceLL = new LinkedList<String>();
 	private static LinkedList<String> searchLL = new LinkedList<String>();
@@ -101,17 +105,7 @@ public class ReplaceTextLoop {
 			}
 			sourceScanner.close();
 			
-			//TODO 0: index SOURCE for all "text" in every line
-			
-			
 			//for each line in searchLines
-			for (ListIterator<String> sourceIter = sourceLL.listIterator(); sourceIter.hasNext();) {
-				
-				
-			}
-			
-			
-			//old iteration
 			while (searchLinesScanner.hasNext()) {
 				String searchString = searchLinesScanner.nextLine();
 				String replaceString = replaceLinesScanner.nextLine();
@@ -119,7 +113,7 @@ public class ReplaceTextLoop {
 				
 				//TODO from here...
 //				source:
-//					xxxx"text1"+VARXYZ   + "text2"xxx, "textA"xxx
+//					xxxx"text1"+VARXYZ + "text2"xxx, "textA"xxx
 //
 //				search:
 //					xxxx "text1" + var_123 + "text2" xxx, "textA" xxx
@@ -127,28 +121,9 @@ public class ReplaceTextLoop {
 //				replace:
 //					xxxx "text1" + VARXYZ + "text2" xxx, "text3" + VARXYZ + "text4" xxx
 //
-//				indexing:
-//				1: index SEARCH: rawText, list of quotes, list of var_N, list of noVarNoSpaceText		--
-//					list of quotes																		done
-//					list of var_N			 															done
-//					list of noVarNoSpaceText - compare with SOURCE's to find SOURCE vars				--
-//					
-//				2: index SOURCE: rawText, list of quotes 												--
-//				3: index REPLACE: rawText, list of quotes, list of var_N								--
-				
-//				searching for line match:
-//				4: SEARCHINDEX quoteList equal to SOURCEINDEX line?				--
-//				5: --> all match:							
-//					if list of var_N(M) not empty, for element in SEARCHINDEX, 
-//						if current element is noVarNoSpaceText, subtract from SOURCE noSpaceText
-//						if current element is var_N(M), from get from start till first ')', '+', ',', 
-//							replace all instances of var_N(M) in REPLACE.rawText
-//					//diff?
-//					
-//				replace each var_N with varXYZ, save in replaceVarRawText
-//						put in SOURCE rawText from 
-				
-//				3: for each SOURCEINDEX, check if "text" count and contents match
+//				1: find all "text" and var_N in SEARCH
+//				2: for each SOURCE line, find all "text"
+//				3: check if "text" count and contents match
 //				4: --> match: for matches, find VARXYZ list
 //				5: for each var_N, replace var_N with VARXYZ in REPLACE
 //				6: from first char of first "text/var_N" in SOURCE to last char of last, replace with same of REPLACE
@@ -157,7 +132,10 @@ public class ReplaceTextLoop {
 				
 				
 				
+				//putting in escape characters
+				searchString = escapeCharacters(searchString);
 				
+				//TODO step here to replace variables with non-capturing group?
 				
 				Pattern pattern = Pattern.compile(searchString);
 				boolean found = false;
@@ -176,7 +154,8 @@ public class ReplaceTextLoop {
 
 				//if not found, check if already replaced
 				if (!found) {					
-				
+					pattern = Pattern.compile(escapeCharacters(replaceString));
+					
 					for(String line : sourceLL) {
 						Matcher matcher = pattern.matcher(line);
 						if (matcher.find()) {
@@ -207,7 +186,7 @@ public class ReplaceTextLoop {
 				printWriter.append(line);
 			}
 			printWriter.close();
-
+			sourceScanner.close();
 			replaceLinesScanner.close();
 			searchLinesScanner.close();
 			listener.onLogOutput(ReplaceUI.getMessage("replaced", new Object[] {subCount}));
@@ -222,6 +201,14 @@ public class ReplaceTextLoop {
 	
 	}
 
+	public static String escapeCharacters(String input) {
+		//escapes characters so that they're not recognised by regex
+		for (String oldStr : noNoChars) {
+			input = input.replace(oldStr, "\\" + oldStr);
+		}
+		return input;
+	}
+	
 	
 	//1
 	public interface LogInterface{

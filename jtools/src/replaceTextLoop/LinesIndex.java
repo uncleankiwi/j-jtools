@@ -77,7 +77,7 @@ public class LinesIndex {
 					}
 					else {
 						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
-								lineNumber, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
+								lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
 						//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
 					}
 					
@@ -111,7 +111,7 @@ public class LinesIndex {
 			else {
 				//if neither search line nor replacement were found, display in log
 				noMatchCount++;
-				logOutput(ReplaceUI.getMessage("LinesIndex.no_match", new Object[] {lineNumber, searchLine.getRaw()}));
+				logOutput(ReplaceUI.getMessage("LinesIndex.no_match", new Object[] {lineNumber + 1, searchLine.getRaw()}));
 
 			}
 			
