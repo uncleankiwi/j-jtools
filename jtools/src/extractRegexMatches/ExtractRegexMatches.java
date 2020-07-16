@@ -23,9 +23,9 @@ public class ExtractRegexMatches {
 //		Pattern pattern = Pattern.compile(args[2]);
 		
 		//removing reliance on args
-		File sourceFile = new File("zemi1.99parsed english.txt");
-		File outFile = new File("zemi1.99parsed english-OJ.txt");
-		Pattern pattern = Pattern.compile("lang\\(\"[^\"]+");
+		File sourceFile = new File("zemi1.99.txt");
+		File outFile = new File("test regex.txt");
+		Pattern pattern = Pattern.compile("lang\\(\".+\"\\)");
 		
 		//lang(" ... ")		---> lang\\(\".+\"\\)
 		//lang\\(\"

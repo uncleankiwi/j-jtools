@@ -25,29 +25,42 @@ public class Line {
 		this.rawtext = raw;
 	}
 	
+	//gets a list of ONLY the quotes that are within lang()
 	public void indexQuotes() {
 		this.quoteCount = 0;
 		this.quoteList = new LinkedList<String>();
-		Pattern pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");	//search string
-		//all in one quote				"  .+  "
-		//includes escaped quotes		"  (.*?)  " 
-		//ignores escaped quotes		"  (.*?)  (?<!\)  " - lookbehind
+		Pattern pattern = Pattern.compile("lang\\(\".+\"\\)");	//lang() search string
 		Matcher matcher = pattern.matcher(this.rawtext);
-		while (matcher.find()) {
-			this.quoteCount++;
-			this.quoteList.addLast(matcher.group());
+		if (matcher.find()) {
+			String langStr = matcher.group();
+			pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");	//quotes search string
+			//all in one quote				"  .+  "
+			//includes escaped quotes		"  (.*?)  " 
+			//ignores escaped quotes		"  (.*?)  (?<!\)  " - lookbehind
+			matcher = pattern.matcher(langStr);
+			while (matcher.find()) {
+				this.quoteCount++;
+				this.quoteList.addLast(matcher.group());
+			}
 		}
+
 		
 	}
 	
+	//again, gets a list of ONLY variables that are within lang()
 	public void indexVars() {
 		this.varCount = 0;
 		this.varList = new LinkedList<String>();
-		Pattern pattern = Pattern.compile("var_\\d+");	//search string
+		Pattern pattern = Pattern.compile("lang\\(\".+\"\\)");	//lang() search string
 		Matcher matcher = pattern.matcher(this.rawtext);
-		while (matcher.find()) {
-			this.varCount++;
-			this.varList.addLast(matcher.group());
+		if (matcher.find()) {
+			String langStr = matcher.group();
+			pattern = Pattern.compile("var_\\d+");	//search string
+			matcher = pattern.matcher(langStr);
+			while (matcher.find()) {
+				this.varCount++;
+				this.varList.addLast(matcher.group());
+			}
 		}
 	}
 	
@@ -162,7 +175,7 @@ public class Line {
 			ListIterator<String> searchVarIter = searchLine.getVars().listIterator();
 			ListIterator<String> sourceVarIter = sourceLine.getVars().listIterator();
 			while (searchVarIter.hasNext()) {
-				String searchVar = searchVarIter.next();
+				String searchVar = searchVarIter.next();//TODO temp
 				String sourceVar = sourceVarIter.next();
 				replaceLine.setRaw(replaceLine.getRaw().replace(searchVar, sourceVar));
 			}

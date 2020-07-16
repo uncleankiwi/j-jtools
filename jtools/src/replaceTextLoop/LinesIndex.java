@@ -48,7 +48,7 @@ public class LinesIndex {
 		replaceIndex.indexQuotes();
 		
 		sourceIndex.indexQuotes();
-
+		
 		//for each SEARCHINDEX line
 		ListIterator<Line> searchIter = searchIndex.listIterator();
 		ListIterator<Line> replaceIter = replaceIndex.listIterator();
@@ -76,6 +76,8 @@ public class LinesIndex {
 						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
 					}
 					else {
+						System.out.println("search " + searchLine.getVars());//TODO temp
+						System.out.println("source " + sourceLine.getVars());
 						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
 								lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
 						//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
