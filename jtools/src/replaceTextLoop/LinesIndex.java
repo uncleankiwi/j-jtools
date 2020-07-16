@@ -74,13 +74,18 @@ public class LinesIndex {
 					//replace REPLACEINDEX's line's vars
 					if (pass) {
 						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
+						sourceLine.setEdited();
 					}
 					else {
-						System.out.println("search " + searchLine.getVars());//TODO temp
-						System.out.println("source " + sourceLine.getVars());
-						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
-								lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
-						//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
+						if (sourceLine.isEdited()) {
+							//TODO stuff here would cause every line to pass.
+							//to add test lines that won't be found
+						}
+						else {
+							logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
+									lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
+							//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
+						}
 					}
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
@@ -101,7 +106,7 @@ public class LinesIndex {
 					Line sourceLine = sourceIter.next();
 					if (Line.quotesMatch(replaceLine, sourceLine)) {
 						alreadyReplacedCount++;
-						found = true;;
+						found = true;
 					}
 				}
 			}

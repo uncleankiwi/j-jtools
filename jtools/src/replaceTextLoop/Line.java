@@ -18,8 +18,7 @@ public class Line {
 	private int quoteCount;
 	private int varCount;
 	public static List<String> noNoChars = Arrays.asList("\"", "{", "}", "(", ")", ".", "+", "*");
-	//for descriptions:
-	//private LinkedList<String> nonLangQuoteList = new LinkedList<String>();
+	private boolean edited = false;	//has this line been edited already? if so, throw no errors when search line not found
 	
 	public Line(String raw) {
 		this.rawtext = raw;
@@ -166,6 +165,14 @@ public class Line {
 		return this.varCount;
 	}
 	
+	public void setEdited() {
+		this.edited = true;
+	}
+	
+	public boolean isEdited() {
+		return this.edited;
+	}
+	
 	//search replace line with searchLine's varList, replace with sourceLine's varList
 	public static boolean tryReplace(Line searchLine, Line replaceLine, Line sourceLine) {
 		if (searchLine.varCount() != sourceLine.varCount()) {
@@ -175,7 +182,7 @@ public class Line {
 			ListIterator<String> searchVarIter = searchLine.getVars().listIterator();
 			ListIterator<String> sourceVarIter = sourceLine.getVars().listIterator();
 			while (searchVarIter.hasNext()) {
-				String searchVar = searchVarIter.next();//TODO temp
+				String searchVar = searchVarIter.next();
 				String sourceVar = sourceVarIter.next();
 				replaceLine.setRaw(replaceLine.getRaw().replace(searchVar, sourceVar));
 			}
