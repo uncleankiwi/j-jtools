@@ -56,6 +56,13 @@ class FileBox extends HBox{
 		});
 	}
 	
+	public void setFile(File newFile) {
+		this.file = newFile;
+		if (file != null) {
+			txtFile.setText(file.getName());
+		}
+	}
+	
 	//1. interface with methods that will be fired in parent
 	public interface FileOpenedInterface{
 		public void onFileOpened(File file);

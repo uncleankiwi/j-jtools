@@ -37,7 +37,6 @@ import javafx.stage.Stage;
 //		filesBox - VBox
 //			sourceBox
 //			searchBox
-//			replaceBox
 //			txtSaveInstr
 //			txtSaveFile
 //			startBox
@@ -49,17 +48,14 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
-//TODO combine search and replace into 1 tsv
-//TODO lang replacement proceeding despite wrong file extensions?
 //TODO TL
 
 
 public class ReplaceUI extends Application {
 	private File sourceFile = null;
-	private File searchFile = null;
-	private File replaceFile = null;
+	private File translationFile = null;
 	private File outputFile = null;
-	private String  log = "";
+	private String log = "";
 
 	private static Locale enLocale = new Locale("en");
 	private static Locale jaLocale = new Locale("ja");
@@ -104,7 +100,8 @@ public class ReplaceUI extends Application {
 			currentLocale = enLocale;
 			ReplaceUI rui = new ReplaceUI();
 			try {
-				rui.start(pStage);		
+				rui.start(pStage);
+				
 			} catch (Exception ex) {
 				logOutput(ex.getMessage());
 			}
@@ -132,9 +129,7 @@ public class ReplaceUI extends Application {
 		txtLog.setStyle("-fx-border-color: black;");
 		
 		FileBox sourceBox = new FileBox(getMessage("ReplaceUI.UI.source_file"), pStage);
-		FileBox searchBox = new FileBox(getMessage("ReplaceUI.UI.search_source_with"), pStage);
-		FileBox replaceBox = new FileBox(getMessage("ReplaceUI.UI.replace_source_with"), pStage);
-
+		FileBox translationBox = new FileBox(getMessage("ReplaceUI.UI.translation_file"), pStage);
 
 		uiWrapper.setPadding(new Insets(5));
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
@@ -144,8 +139,14 @@ public class ReplaceUI extends Application {
 		uiWrapWrapper.getChildren().addAll(menuBar, uiWrapper);
 		
 		filesBox.setPadding(new Insets(10));
-		filesBox.getChildren().addAll(sourceBox, searchBox, replaceBox, txtSaveInstr, txtSaveFile, startBox);
+		filesBox.getChildren().addAll(sourceBox, translationBox, txtSaveInstr, txtSaveFile, startBox);
 		filesBox.setAlignment(Pos.CENTER_LEFT);
+		
+		//for refreshing UI after changing language setting
+		if (this.sourceFile != null) sourceBox.setFile(sourceFile);
+		if (this.translationFile != null) translationBox.setFile(translationFile);
+		if (this.outputFile != null) this.txtSaveFile.setText(outputFile.getName());
+		if (this.log != "") this.txtLog.setText(this.log);
 		
 		LinesIndex.setLogOutputListener(new LogInterface() {
 			@Override
@@ -189,10 +190,10 @@ public class ReplaceUI extends Application {
 			}
 		});
 		
-		searchBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
+		translationBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
 			@Override
 			public void onFileOpened(File file) {
-				searchFile = file;
+				translationFile = file;
 			}
 
 			@Override
@@ -201,17 +202,6 @@ public class ReplaceUI extends Application {
 			}
 		});
 		
-		replaceBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
-			@Override
-			public void onFileOpened(File file) {
-				replaceFile = file;
-			}
-
-			@Override
-			public void onLogOutput(String msg) {
-				logOutput(msg);				
-			}
-		});
 		
 		btnStart.setOnAction(e -> {
 			//check if all files have been specified
@@ -221,15 +211,9 @@ public class ReplaceUI extends Application {
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
-			else if (searchFile == null) {
+			else if (translationFile == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_search"));
-				alert.setTitle("");
-				alert.showAndWait().ifPresent(response -> {});
-			}
-			else if (replaceFile == null) {
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_replacement"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
@@ -326,9 +310,9 @@ public class ReplaceUI extends Application {
 					new Object[] {this.sourceFile.getName()}));
 			return false;
 		}
-		else if (!this.searchFile.exists()) {
+		else if (!this.translationFile.exists()) {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.search_does_not_exist", 
-					new Object[] {this.searchFile.getName()}));
+					new Object[] {this.translationFile.getName()}));
 			return false;
 		}
 				
@@ -344,7 +328,7 @@ public class ReplaceUI extends Application {
 		try {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
-			Scanner searchLinesScanner = new Scanner(this.searchFile);
+			Scanner searchLinesScanner = new Scanner(this.translationFile);
 
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;
