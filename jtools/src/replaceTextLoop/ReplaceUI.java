@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Optional;
@@ -319,7 +320,7 @@ public class ReplaceUI extends Application {
 		this.sourceLI = new LinesIndex();
 		this.itemDI = new ItemDescIndex();
 
-		//open the 3 files
+		//open the 2 files
 		if (!this.sourceFile.exists() || this.sourceFile == null){
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.source_does_not_exist", 
 					new Object[] {this.sourceFile.getName()}));
@@ -330,11 +331,6 @@ public class ReplaceUI extends Application {
 					new Object[] {this.searchFile.getName()}));
 			return false;
 		}
-		else if (!this.replaceFile.exists()) {
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.replacement_does_not_exist", 
-					new Object[] {this.replaceFile.getName()}));
-			return false;
-		}
 				
 		try {
 			Files.copy(this.sourceFile.toPath(), this.outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -343,43 +339,68 @@ public class ReplaceUI extends Application {
 			logOutput(e.getMessage());
 			return false;
 		}
-		
-		//checking extensions and switching modes
-		this.mode = null;
-		String searchExtension = getFileNameAndExtension(this.sourceFile.toPath().toString())[1];
-		String replaceExtension = getFileNameAndExtension(this.replaceFile.toPath().toString())[1];
-		if (searchExtension.equals(".txt") && replaceExtension.equals(".txt")) {
-			this.mode = Mode.LANG;
-		}
-		else if (searchExtension.equals(".tsv") && replaceExtension.equals(".tsv")){
-			this.mode = Mode.DESC;
-		}
-		else {
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.incorrect_file_extensions", 
-					new Object[] {searchExtension, replaceExtension}));
-			return false;
-		}
-		
-		
-		//parse files
-		int searchLinesRows = 0;
-		int replaceLinesRows = 0;
-		try {
-			Scanner replaceLinesScanner = new Scanner(this.replaceFile);
-			Scanner searchLinesScanner = new Scanner(this.searchFile);
-			
-			//if number of lines in files don't match, stop	
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
-			while (replaceLinesScanner.hasNext()) {
-				replaceLinesRows++;
 				
-				if (this.mode == Mode.DESC) {
-					//no searchDI or replaceDI. combined into itemDI.
+		//parse files
+		try {
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
+			
+			Scanner searchLinesScanner = new Scanner(this.searchFile);
+
+			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
+			int minCols = 0;
+			int maxCols = 0;
+			
+			//separating tsv values
+			while (searchLinesScanner.hasNext()) {
+				String[] stringsArrToAdd = searchLinesScanner.nextLine().split("\t");
+				LinkedList<String> tempRow = new LinkedList<String>();
+				int rowCount = 0;
+				for (String str : stringsArrToAdd) {
+					tempRow.add(str);
+					rowCount++;
 				}
-				else if (this.mode == Mode.LANG) {
-					replaceLI.add(replaceLinesScanner.nextLine());
-				}				
+				tempLL.add(tempRow);
+				if (minCols == 0 || rowCount < minCols) minCols = rowCount;
+				if (rowCount > maxCols) maxCols = rowCount;
 			}
+			searchLinesScanner.close();
+			
+			//if translation file is empty
+			if (tempLL.size() == 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_file_empty")));
+			}
+			
+			//setting mode based on col count
+			if (minCols == 2 && maxCols == 2) {
+				this.mode = Mode.LANG;
+			}
+			else if (minCols == 7 && maxCols == 7) {
+				this.mode = Mode.DESC;
+			}
+			else {
+				logOutput(ReplaceUI.getMessage("ReplaceUI.filecheck.column_length_wrong", new Object[] {minCols, maxCols}));
+				//ReplaceUI.filecheck.column_length_wrong: The translation file needs to have 2 columns 
+				//in all rows for lang() translation or 7 columns in all rows for item description translation. 
+				//The translation file column numbers ranged from {0} to {1}.
+				return false;
+			}
+			
+			
+			//based on mode, place values into searchLI/replaceLI, or itemDI
+			ListIterator<LinkedList<String>> tempIter = tempLL.listIterator();
+			if (this.mode == Mode.LANG) {
+				while (tempIter.hasNext()){
+					
+				}
+			}
+			else if (this.mode == Mode.DESC) {
+				while (tempIter.hasNext()){
+					
+				}
+			}
+
+			
+			//if number of lines in files don't match, stop	TODO
 			while (searchLinesScanner.hasNext()) {
 				searchLinesRows++;
 				if (this.mode == Mode.DESC) {
@@ -389,8 +410,9 @@ public class ReplaceUI extends Application {
 					searchLI.add(searchLinesScanner.nextLine());
 				}				
 			}
-			searchLinesScanner.close();
-			replaceLinesScanner.close();
+
+			
+			//switch modes
 			
 			if (searchLinesRows == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.search_file_empty")));
