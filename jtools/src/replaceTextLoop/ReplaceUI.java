@@ -48,9 +48,7 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
-//TODO bug: after replacing source line, other identical search lines complain about not being found
-//	maybe because quotematch called in checking for alreadyreplaced considers more than lang() in source
-//TODO removed edited attribute in Line?
+
 //TODO scroll log to bottom automatically
 //TODO combine search and replace into 1 tsv
 //TODO lang replacement proceeding despite wrong file extensions?

@@ -58,6 +58,7 @@ public class LinesIndex {
 			Line replaceLine = replaceIter.next();
 			
 			boolean found = false;	//is this line present at least once in entire source?
+			boolean alreadyReplaced = false;	//was this line not found, but its replacement found at least once?
 			
 			//for each SOURCEINDEX line
 			ListIterator<Line> sourceIter = sourceIndex.listIterator();
@@ -74,23 +75,17 @@ public class LinesIndex {
 					//replace REPLACEINDEX's line's vars
 					if (pass) {
 						pass = Line.tryReplace(searchLine, replaceLine, sourceLine);
-						sourceLine.setEdited();
 					}
 					else {
-						if (sourceLine.isEdited()) {
-							//TODO stuff here would cause every line to pass.
-							//to add test lines that won't be found
-						}
-						else {
-							logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
-									lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
-							//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
-						}
+						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
+								lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
+						//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
 					}
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
 					if (pass) {
 						sourceLine.setRaw(replaceLine.getRaw());
+						sourceLine.setQuotes(replaceLine);
 						found = true;
 						totalReplacedCount++;
 					}
@@ -105,8 +100,7 @@ public class LinesIndex {
 				while (sourceIter.hasNext()) {
 					Line sourceLine = sourceIter.next();
 					if (Line.quotesMatch(replaceLine, sourceLine)) {
-						alreadyReplacedCount++;
-						found = true;
+						alreadyReplaced = true;
 					}
 				}
 			}
@@ -114,6 +108,9 @@ public class LinesIndex {
 			if (found) {
 				//this search line was found at least once in entire source file
 				replacedCount++;
+			}
+			else if (alreadyReplaced) {
+				alreadyReplacedCount++;
 			}
 			else {
 				//if neither search line nor replacement were found, display in log
