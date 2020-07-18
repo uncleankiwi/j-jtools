@@ -12,6 +12,10 @@ public class ItemDescIndex {
 		idi.add(new ItemDesc(newItem));
 	}
 	
+	public void add(LinkedList<String> newItem) {
+		idi.add(new ItemDesc(newItem));
+	}
+	
 	public ListIterator<ItemDesc> listIterator(){
 		return idi.listIterator();
 	}
@@ -94,6 +98,13 @@ public class ItemDescIndex {
 			String[] descToAdd = newItem.split("\t");
 			for (String str : descToAdd) {
 				this.descriptions.add(str);
+			}
+		}
+		
+		private ItemDesc(LinkedList<String> newItem) {
+			ListIterator<String> iter = newItem.listIterator();
+			while (iter.hasNext()) {
+				this.descriptions.add(iter.next());
 			}
 		}
 		
