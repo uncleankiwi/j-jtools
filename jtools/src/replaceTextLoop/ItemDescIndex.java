@@ -36,7 +36,7 @@ public class ItemDescIndex {
 			if (descIter.hasNext()) {
 				currentDesc = descIter.next();
 			}
-			boolean foundFirstDesc = false;	//has the first description of this item been found in the source yet?
+			int descsFound = 0;	//number of descriptions for this item found. will start replacing when >=5. (i.e. english only)
 			int linesAfterFirstFound = 0;	//number of source lines looked through after foundFirstDesc. will quit search if >15
 			
 			//for each sourceIndex line
@@ -49,9 +49,14 @@ public class ItemDescIndex {
 					//if descIter.hasNext(), then set currentDesc.
 					//else that was the final desc. break.			--> replacedCount++
 				if (sourceLine.getRaw().contains(currentDesc)) {
-					if (!foundFirstDesc) foundFirstDesc = true;
-					else sourceLine.setRaw(sourceLine.getRaw().replaceAll("\"(.*?)(?<!\\\\)\"", currentDesc));
-					if (descIter.hasNext()) currentDesc = descIter.next();
+					descsFound++;
+					if (descsFound >= 5) {	//replace only the english ones
+						sourceLine.setRaw(sourceLine.getRaw().replaceAll("\"(.*?)(?<!\\\\)\"", currentDesc));
+					}
+					if (descIter.hasNext()) {
+						currentDesc = descIter.next();
+						
+					}
 					else {
 						replacedCount++;
 						break;
@@ -60,7 +65,7 @@ public class ItemDescIndex {
 
 				//linesAfterFirstFound++
 				//if linesAfterFirstFound > 15, break	--> ItemDescIndex.fail_line_replace: Line {0} matched but could not replace: {1}
-				if (foundFirstDesc) linesAfterFirstFound++;
+				if (descsFound > 0) linesAfterFirstFound++;
 				if (linesAfterFirstFound > 15) {
 					logOutput(ReplaceUI.getMessage("ItemDescIndex.fail_line_replace", new Object[] {lineNumber + 1, item.getFirstDesc()}));
 					break;
@@ -69,7 +74,7 @@ public class ItemDescIndex {
 			
 			//if no matches,
 				//noMatchCount++	-->ItemDescIndex.no_match: Line {0} not found: {1}
-			if (!foundFirstDesc) {
+			if (descsFound == 0) {
 				noMatchCount++;
 				logOutput(ReplaceUI.getMessage("ItemDescIndex.no_match", new Object[] {lineNumber + 1, item.getFirstDesc()}));
 			}

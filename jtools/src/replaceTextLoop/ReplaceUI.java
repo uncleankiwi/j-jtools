@@ -49,7 +49,6 @@ import javafx.stage.Stage;
 //4. trigger child's listener somewhere. In child?
 
 //TODO 
-//TODO replace ONLY eng rows 1 and 3
 //TODO check for lang() or "" in LinesIndex or IDI after parsing?
 //TODO TL
 
@@ -361,7 +360,7 @@ public class ReplaceUI extends Application {
 			if (minCols == 2 && maxCols == 2) {
 				this.mode = Mode.LANG;
 			}
-			else if (minCols == 7 && maxCols == 7) {
+			else if ((minCols == 7 && maxCols == 7) || (minCols == 8 && maxCols == 8)) {//8 in case new eng variables are added
 				this.mode = Mode.DESC;
 			}
 			else {
