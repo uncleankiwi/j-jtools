@@ -48,9 +48,9 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
-
-//TODO extract block of decomp code into tsv
+//TODO 
 //TODO replace ONLY eng rows 1 and 3
+//TODO check for lang() or "" in LinesIndex or IDI after parsing?
 //TODO TL
 
 

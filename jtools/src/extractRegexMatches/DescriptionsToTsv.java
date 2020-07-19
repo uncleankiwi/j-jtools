@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 //grabs item descriptions from startLine to endLine, puts each item into separate tsv columns
-public class SourceToTsv {
+public class DescriptionsToTsv {
 	final static int TSV_COL_COUNT = 7;
 	static int startLine = 69605;
 	static int endLine = 148417;

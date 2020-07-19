@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.regex.*;
 
 //extracts lang(stuff) from source code for easy translation and later incorporation
-public class ExtractRegexMatches {
+public class LangToTsv {
 
 	public static void main(String[] args) {
 		//open source file

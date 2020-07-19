@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 //combines 2 text files into a .tsv
-public class TextsToTsv {
+public class CombineIntoTsv {
 	
 	public static void main(String[] args) {
 		File file1 = new File("zemi1.99parsed.txt");
