@@ -11,14 +11,14 @@ import java.util.regex.Pattern;
 //grabs item descriptions from startLine to endLine, puts each item into separate tsv columns
 public class DescriptionsToTsv {
 	final static int TSV_COL_COUNT = 7;
-	static int startLine = 69605;
-	static int endLine = 148417;
+	static int startLine = 1;	//69605;
+	static int endLine = 215;	//148417;
 	final static String VAR_STRING = "var_446";
 	
 	
 	public static void main(String[] args) {
-		File sourceFile = new File("1.995Rs");
-		File outFile = new File("1.99itemdescs.tsv");
+		File sourceFile = new File("1.99IDsource eng.txt");
+		File outFile = new File("IDI test.txt");
 		LinkedList<String> outLL = new LinkedList<String>();
 		try {
 			Scanner sourceScan = new Scanner(sourceFile);
