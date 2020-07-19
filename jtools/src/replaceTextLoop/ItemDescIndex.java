@@ -2,11 +2,14 @@ package replaceTextLoop;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //each ItemDesc in this holds the descriptions for 1 item
 public class ItemDescIndex {
 	private LinkedList<ItemDesc> idi = new LinkedList<ItemDesc>();
 	private static LogInterface logListener; //log stuff
+	private final static int NUMBER_OF_DESC = 4;	//number of descriptions in Japanese version
 
 	public void add(String newItem) {
 		idi.add(new ItemDesc(newItem));
@@ -43,25 +46,36 @@ public class ItemDescIndex {
 			ListIterator<Line> sourceIter = sourceIndex.listIterator();
 			while (sourceIter.hasNext()) {
 				Line sourceLine = sourceIter.next();
-				//this source line contains currentDesc:
-					//if it's the first desc, foundFirstDesc = true
-					//else it's not the first desc, so replace
-					//if descIter.hasNext(), then set currentDesc.
-					//else that was the final desc. break.			--> replacedCount++
-				if (sourceLine.getRaw().contains(currentDesc)) {
-					descsFound++;
-					if (descsFound >= 5) {	//replace only the english ones
-						sourceLine.setRaw(sourceLine.getRaw().replaceAll("\"(.*?)(?<!\\\\)\"", currentDesc));
-					}
-					if (descIter.hasNext()) {
-						currentDesc = descIter.next();
-						
-					}
-					else {
-						replacedCount++;
-						break;
+				
+				if (descsFound < NUMBER_OF_DESC) {	//looking for japanese texts
+					if (sourceLine.getRaw().contains(currentDesc)) {
+						descsFound++;
+						if (descIter.hasNext()) {
+							currentDesc = descIter.next();
+						}
+						else {
+							replacedCount++;
+							break;
+						}
 					}
 				}
+				else {	//looking for quotation marks where english texts should be, and replacing
+					Pattern pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");
+					Matcher matcher = pattern.matcher(sourceLine.getRaw());
+					if (matcher.find()) {
+						descsFound++;
+						//sourceLine.setRaw(sourceLine.getRaw().replaceAll("\"(.*?)(?<!\\\\)\"", currentDesc));
+						sourceLine.setRaw(matcher.replaceAll((currentDesc.replaceAll("\\\\", "\\\\\\\\"))));
+						if (descIter.hasNext()) {
+							currentDesc = descIter.next();
+						}
+						else {
+							replacedCount++;
+							break;
+						}
+					}
+				}
+				
 
 				//linesAfterFirstFound++
 				//if linesAfterFirstFound > 15, break	--> ItemDescIndex.fail_line_replace: Line {0} matched but could not replace: {1}

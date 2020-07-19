@@ -156,6 +156,12 @@ public class ReplaceUI extends Application {
 				logOutput(msg);
 			}
 		});
+		ItemDescIndex.setLogOutputListener(new LogInterface() {
+			@Override
+			public void onLogOutput(String msg) {
+				logOutput(msg);				
+			}
+		});
 		
 		
 		//3. parent, listening for child
@@ -395,7 +401,7 @@ public class ReplaceUI extends Application {
 			}
 			sourceScanner.close();
 			
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked"));
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked", new Object[] {this.mode.toString()}));
 			return true;
 		} catch (Exception e) {
 			logOutput(e.getMessage());
