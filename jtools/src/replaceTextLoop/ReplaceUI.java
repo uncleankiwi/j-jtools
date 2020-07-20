@@ -48,11 +48,6 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
-//TODO 
-//TODO check for lang() or "" in LinesIndex or IDI after parsing?
-//TODO TL
-
-
 public class ReplaceUI extends Application {
 	private File sourceFile = null;
 	private File translationFile = null;
@@ -370,7 +365,7 @@ public class ReplaceUI extends Application {
 				this.mode = Mode.DESC;
 			}
 			else {
-				logOutput(ReplaceUI.getMessage("ReplaceUI.filecheck.column_length_wrong", new Object[] {minCols, maxCols}));
+				logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.column_length_wrong", new Object[] {minCols, maxCols}));
 				//ReplaceUI.filecheck.column_length_wrong: The translation file needs to have 2 columns 
 				//in all rows for lang() translation or 7 columns in all rows for item description translation. 
 				//The translation file column numbers ranged from {0} to {1}.
