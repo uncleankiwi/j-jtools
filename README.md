@@ -1,7 +1,7 @@
 # j-jtools:Eplus用翻訳差し替えツール
 ![ss](https://i.imgur.com/PYIxSZs.png)
 ## 使い方
-1. ReplaceUI.jarをダブルクリックして実行する  
+1. EplusReplace.jarをダブルクリックして実行する  
     開けない・実行することができない場合はコマンドプロンプトで  
     ```java -jar EplusReplace.jar```  
     を入力して実行する必要があるかもしれません  
