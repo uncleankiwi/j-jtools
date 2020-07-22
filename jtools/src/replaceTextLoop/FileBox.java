@@ -1,7 +1,7 @@
 package replaceTextLoop;
 
 import java.io.File;
-import java.net.URLDecoder;
+import java.nio.file.Paths;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -38,15 +38,7 @@ class FileBox extends HBox{
 		this.setPadding(new Insets(10, 0, 10, 0));
 		
 		btnOpen.setOnAction(e-> {
-			//find where this jar is, and set file dialogue's default directory to it
-			String decodedPath = "";
-			try {
-				String jarPath = (ReplaceUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
-				decodedPath = URLDecoder.decode(jarPath, "UTF-8");
-			} catch (Exception ex) {
-				listener.onLogOutput(ex.getMessage());
-			}
-			fileChooser.setInitialDirectory(new File(decodedPath));
+			fileChooser.setInitialDirectory(new File(Paths.get(".").toAbsolutePath().normalize().toString()));
 			file = fileChooser.showOpenDialog(stage);
 			if (file != null) {
 				txtFile.setText(file.getName());
