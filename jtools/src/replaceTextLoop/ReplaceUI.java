@@ -48,11 +48,16 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
+
+//TODO update zemi translations
+//TODO known issues list: source/TL files appear empty if encoding is wrong
+//TODO KIL: unable to parse multiple lang( ) in one line
 //TODO fix files empty
 //TODO fix lines not found
 //TODO fix item desc TL
 //TODO uncomment file renaming
 //TODO publish release
+//TODO pick encoding?
 
 public class ReplaceUI extends Application {
 	private File sourceFile = null;
