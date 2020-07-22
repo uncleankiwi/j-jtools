@@ -338,11 +338,6 @@ public class ReplaceUI extends Application {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
 			Scanner searchLinesScanner = new Scanner(this.translationFile);
-			
-			System.out.println("tl is file: " + this.translationFile.isFile());	//TODO
-			System.out.println("tl length: " + this.translationFile.length());	//TODO
-			System.out.println("source length" + this.sourceFile.length());
-			System.out.println("scanner " );
 
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;

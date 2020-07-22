@@ -49,14 +49,6 @@ public class LinesIndex {
 		
 		sourceIndex.indexQuotes();
 		
-		
-		System.out.println("source print...");
-		sourceIndex.print();//TODO
-		System.out.println("search print...");
-		searchIndex.print();
-		System.out.println("replace print...");
-		replaceIndex.print();
-		
 		//for each SEARCHINDEX line
 		ListIterator<Line> searchIter = searchIndex.listIterator();
 		ListIterator<Line> replaceIter = replaceIndex.listIterator();
