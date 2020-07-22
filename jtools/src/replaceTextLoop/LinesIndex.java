@@ -49,6 +49,14 @@ public class LinesIndex {
 		
 		sourceIndex.indexQuotes();
 		
+		
+		System.out.println("source print...");
+		sourceIndex.print();//TODO
+		System.out.println("search print...");
+		searchIndex.print();
+		System.out.println("replace print...");
+		replaceIndex.print();
+		
 		//for each SEARCHINDEX line
 		ListIterator<Line> searchIter = searchIndex.listIterator();
 		ListIterator<Line> replaceIter = replaceIndex.listIterator();
@@ -137,7 +145,12 @@ public class LinesIndex {
 		}
 	}
 	
+	public int getSize() {
+		return this.LI.size();
+	}
+	
 	public void print() {	//temp
+		System.out.println("Index size: " + this.getSize());
 		ListIterator<Line> iter = LI.listIterator();
 		while (iter.hasNext()) {
 			System.out.println("Line index: " + iter.nextIndex());
@@ -157,6 +170,5 @@ public class LinesIndex {
 			
 		}	
 	}
-
-
+	
 }

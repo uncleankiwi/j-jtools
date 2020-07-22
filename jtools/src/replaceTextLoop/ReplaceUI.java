@@ -48,6 +48,12 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
+//TODO fix files empty
+//TODO fix lines not found
+//TODO fix item desc TL
+//TODO uncomment file renaming
+//TODO publish release
+
 public class ReplaceUI extends Application {
 	private File sourceFile = null;
 	private File translationFile = null;
@@ -332,6 +338,11 @@ public class ReplaceUI extends Application {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
 			Scanner searchLinesScanner = new Scanner(this.translationFile);
+			
+			System.out.println("tl is file: " + this.translationFile.isFile());	//TODO
+			System.out.println("tl length: " + this.translationFile.length());	//TODO
+			System.out.println("source length" + this.sourceFile.length());
+			System.out.println("scanner " );
 
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;
@@ -355,6 +366,7 @@ public class ReplaceUI extends Application {
 			//if translation file is empty
 			if (tempLL.size() == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_file_empty")));
+				return false;
 			}
 			
 			//setting mode based on col count
@@ -395,11 +407,15 @@ public class ReplaceUI extends Application {
 				sourceLI.add(sourceScanner.nextLine());
 			}
 			sourceScanner.close();
+			if (sourceLI.getSize() == 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_file_empty")));
+				return false;
+			}
 			
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked", new Object[] {this.mode.toString()}));
 			return true;
 		} catch (Exception e) {
-			logOutput(e.getMessage());
+			logOutput(e.toString());
 			return false;
 		}
 	}

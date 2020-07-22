@@ -2,5 +2,6 @@
 /TEST
 /*.txt
 /*.995Rs
-/src.txt out
+/*.txt out
 /*.tsv
+/*.jar
