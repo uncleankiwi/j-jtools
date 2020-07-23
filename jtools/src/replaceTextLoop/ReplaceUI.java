@@ -49,7 +49,6 @@ import javafx.stage.Stage;
 //4. trigger child's listener somewhere. In child?
 
 
-//TODO update zemi translations
 //TODO known issues list: source/TL files appear empty if encoding is wrong
 //TODO KIL: unable to parse multiple lang( ) in one line
 //TODO fix files empty
@@ -342,7 +341,7 @@ public class ReplaceUI extends Application {
 		try {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
-			Scanner searchLinesScanner = new Scanner(this.translationFile);
+			Scanner searchLinesScanner = new Scanner(this.translationFile, "utf-8");//TODO remove encoding
 
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;
@@ -364,8 +363,12 @@ public class ReplaceUI extends Application {
 			searchLinesScanner.close();
 			
 			//if translation file is empty
-			if (tempLL.size() == 0) {
+			if (tempLL.size() == 0 && this.translationFile.length() == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_file_empty")));
+				return false;
+			}
+			else if (tempLL.size() == 0 && this.translationFile.length() != 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_encode_read_error", new Object[] {this.translationFile.length()})));
 				return false;
 			}
 			
@@ -407,8 +410,12 @@ public class ReplaceUI extends Application {
 				sourceLI.add(sourceScanner.nextLine());
 			}
 			sourceScanner.close();
-			if (sourceLI.getSize() == 0) {
+			if (sourceLI.getSize() == 0 && this.sourceFile.length() == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_file_empty")));
+				return false;
+			}
+			else if (sourceLI.getSize() == 0 && this.sourceFile.length() != 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_encode_read_error", new Object[] {this.sourceFile.length()})));
 				return false;
 			}
 			
