@@ -53,7 +53,8 @@ public class Line {
 		Matcher matcher = pattern.matcher(this.rawtext);
 		if (matcher.find()) {
 			String langStr = matcher.group();
-			pattern = Pattern.compile("var_\\d+");	//search string
+			//pattern = Pattern.compile("var_\\d+");	//search string var_N
+			pattern = Pattern.compile("var_\\d+(\\(.*\\)?)?");
 			matcher = pattern.matcher(langStr);
 			while (matcher.find()) {
 				this.varCount++;
