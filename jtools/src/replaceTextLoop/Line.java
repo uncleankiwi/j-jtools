@@ -54,7 +54,7 @@ public class Line {
 		if (matcher.find()) {
 			String langStr = matcher.group();
 			//pattern = Pattern.compile("var_\\d+");	//search string var_N
-			pattern = Pattern.compile("var_\\d+(\\(.*\\)?)?");
+			pattern = Pattern.compile("var_\\d+(\\(.*?\\))?");
 			matcher = pattern.matcher(langStr);
 			while (matcher.find()) {
 				this.varCount++;
