@@ -48,13 +48,6 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
-
-//TODO KIL: unable to parse multiple lang( ) in one line
-//TODO fix item desc TL
-//TODO uncomment file renaming
-//TODO publish release
-//TODO pick encoding?
-
 public class ReplaceUI extends Application {
 	private File sourceFile = null;
 	private File translationFile = null;
@@ -84,11 +77,11 @@ public class ReplaceUI extends Application {
 	//both modes use fileCheck and put the source into a LinesIndex
 	//differences:
 	//LANG replaces lang() in source.
-	//		Search and replace files are indexed into LinesIndex.
-	//		Mode activated by opening two .txt files.
+	//		Translation file is indexed into 2 LinesIndex.
+	//		Mode activated by opening a tab separated values file with 2 columns.
 	//DESC replaces item descriptions in source.
-	//		Search and replace files are indexed into Desc
-	//		Mode activated by opening two .tsv files.
+	//		Translation file is indexed into 1 ItemDescIndex.
+	//		Mode activated by opening a tab separated values file with 7 to 8 columns.
 	private enum Mode {LANG, DESC};
 	private Mode mode;
 	
