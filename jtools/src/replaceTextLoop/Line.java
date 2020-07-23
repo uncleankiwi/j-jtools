@@ -29,7 +29,7 @@ public class Line {
 		this.quoteList = new LinkedList<String>();
 		Pattern pattern = Pattern.compile("lang\\(\".+\"\\)");	//lang() search string
 		Matcher matcher = pattern.matcher(this.rawtext);
-		if (matcher.find()) {
+		while (matcher.find()) {
 			String langStr = matcher.group();
 			pattern = Pattern.compile("\"(.*?)(?<!\\\\)\"");	//quotes search string
 			//all in one quote				"  .+  "
@@ -51,7 +51,7 @@ public class Line {
 		this.varList = new LinkedList<String>();
 		Pattern pattern = Pattern.compile("lang\\(\".+\"\\)");	//lang() search string
 		Matcher matcher = pattern.matcher(this.rawtext);
-		if (matcher.find()) {
+		while (matcher.find()) {
 			String langStr = matcher.group();
 			pattern = Pattern.compile("var_\\d+");	//search string
 			matcher = pattern.matcher(langStr);
@@ -73,7 +73,9 @@ public class Line {
 		Matcher matcher = pattern.matcher(this.rawtext);
 		String sourceLangPart = "";
 		if (matcher.find()) {
-			sourceLangPart = matcher.group();
+			while (matcher.find()) {
+				sourceLangPart = matcher.group();
+			}
 		}
 		else {
 			return false;

@@ -49,10 +49,7 @@ import javafx.stage.Stage;
 //4. trigger child's listener somewhere. In child?
 
 
-//TODO known issues list: source/TL files appear empty if encoding is wrong
 //TODO KIL: unable to parse multiple lang( ) in one line
-//TODO fix files empty
-//TODO fix lines not found
 //TODO fix item desc TL
 //TODO uncomment file renaming
 //TODO publish release
@@ -184,15 +181,15 @@ public class ReplaceUI extends Application {
 				
 				//try to append date
 				String date = LocalDate.now().toString();
-				outputFile = new File(name + " " + date + extension);//TODO uncomment
-//				if (outputFile.exists()){
-//					//but if it exists, append date + N
-//					int i = 1;
-//					while (outputFile.exists()) {
-//						outputFile = new File(name + " " + date + " " + i + extension);
-//						i++;
-//					}
-//				}
+				outputFile = new File(name + " " + date + extension);
+				if (outputFile.exists()){
+					//but if it exists, append date + N
+					int i = 1;
+					while (outputFile.exists()) {
+						outputFile = new File(name + " " + date + " " + i + extension);
+						i++;
+					}
+				}
 
 				txtSaveFile.setText(outputFile.getName());
 			}
@@ -341,7 +338,7 @@ public class ReplaceUI extends Application {
 		try {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
-			Scanner searchLinesScanner = new Scanner(this.translationFile, "utf-8");//TODO remove encoding
+			Scanner searchLinesScanner = new Scanner(this.translationFile);//"windows-31j"
 
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;
