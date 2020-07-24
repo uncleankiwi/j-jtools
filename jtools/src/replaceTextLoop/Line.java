@@ -95,7 +95,8 @@ public class Line {
 		//string0 var0 string1 var1 string2
 		//1. find searchVarStart, searchVarEnd in searchNoSpaces
 		for (String var : searchLine.getVars()) {
-			pattern = Pattern.compile(var);
+			String varNoSpaces = var.replace(" ", "");
+			pattern = Pattern.compile(Line.escapeCharacters(varNoSpaces));
 			matcher = pattern.matcher(searchNoSpaces);
 			if (matcher.find(searchStartPos)) {
 				searchVarStarts.add(matcher.start());

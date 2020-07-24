@@ -78,8 +78,9 @@ public class LinesIndex {
 					}
 					else {
 						logOutput(ReplaceUI.getMessage("LinesIndex.fail_line_replace", new Object[] {
-								lineNumber + 1, searchLine.varCount(), replaceLine.varCount(), searchLine.getRaw()}));
+								lineNumber + 1, searchLine.varCount(), sourceLine.varCount(), searchLine.getRaw()}));
 						//Search line {0} variable count ({1}) does not match source variable count ({2}). Line: {3}
+												
 					}
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
