@@ -2,12 +2,19 @@
 ![ss](https://i.imgur.com/PYIxSZs.png)
 ## 使い方
 1. EplusReplace.jarをダブルクリックして実行する  
-    開けない・実行することができない場合はコマンドプロンプトで  
-    ```java -jar EplusReplace.jar```  
-    を入力して実行する必要があるかもしれません  
 2. ソースコードを開く
 3. 翻訳ファイルを開く
 4. ｱｲﾃﾉｺﾞｰﾙﾆｼｭｩｰ
+
+## 開けない・実行することができない場合
+windows環境なら幾つの方法があります
+- EplusReplace.jarを右クリックして  
+	プログラムから開く >  
+	Java Platform SE binaryを選択  
+
+- コマンドプロンプトで  
+	```java -jar EplusReplace.jar```  
+	を入力して実行
 
 ## 注意点
 出力されたファイルは所存するファイルを上書きしないように、  
