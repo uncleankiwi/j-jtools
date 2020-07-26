@@ -3,6 +3,7 @@ package extractRegexMatches;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.regex.*;
@@ -10,6 +11,7 @@ import java.util.regex.*;
 //extracts lang(stuff) from source code for easy translation and later incorporation
 public class LangToTsv {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		//open source file
 //		if (args.length != 3) {
@@ -23,9 +25,11 @@ public class LangToTsv {
 //		Pattern pattern = Pattern.compile(args[2]);
 		
 		//removing reliance on args
-		File sourceFile = new File("zemi1.99.txt");
-		File outFile = new File("test regex.txt");
+		File sourceFile = new File("source full 1995r zemi replaced.txt");
+		File outFile = new File("sorry lang original.txt");
 		Pattern pattern = Pattern.compile("lang\\(\".+\"\\)");
+		final boolean PRINT_LINES_WITHOUT_LANG = false;
+		OutputStream outStream;
 		
 		//lang(" ... ")		---> lang\\(\".+\"\\)
 		//lang\\(\"
@@ -45,18 +49,28 @@ public class LangToTsv {
 		int lineCount = 0;
 		int matchCount = 0;
 		try {
-			try(Scanner input = new Scanner(sourceFile);
+			try(Scanner input = new Scanner(sourceFile, "shift_jis");
 				PrintWriter output = new PrintWriter(outFile);){
 				while(input.hasNext()) {
 					lineCount++;
 					String inputLine = input.nextLine();
 					Matcher matcher = pattern.matcher(inputLine);
+					boolean found = false;
 					while (matcher.find()) {
 						//adds every hit line by line to output file
-						output.write(matcher.group());
-						output.write("\n");
-						matchCount++;
-					}		
+						String matchStr = matcher.group();
+						if (matchStr.contains("Sorry, this is untranslated sentence")) {
+							output.write(matchStr);
+							output.write("\n");
+							matchCount++;
+							found = true;
+						}
+
+					}	
+
+					if (PRINT_LINES_WITHOUT_LANG && !found){
+						System.out.println("Line without lang: " + inputLine);
+					}
 					
 					
 				}
