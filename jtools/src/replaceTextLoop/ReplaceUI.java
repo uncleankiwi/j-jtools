@@ -1,12 +1,17 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Optional;
@@ -51,14 +56,17 @@ import javafx.stage.Stage;
 public class ReplaceUI extends Application {
 	public static String version = "1.1";
 	
-	private File sourceFile = null;
-	private File translationFile = null;
-	private File outputFile = null;
+	private Path sourcePath = null;
+	private Path translationPath = null;
+	private Path outputPath = null;
 	private String log = "";
 
 	private static Locale enLocale = new Locale("en");
 	private static Locale jaLocale = new Locale("ja");
 	private static Locale currentLocale = jaLocale;
+	
+	private static String[] supportedEncodings = {"windows-31j", "UTF-8", "Shift_JIS"};
+	private String encodingUsed = null;
 
 	private VBox uiWrapWrapper = new VBox();
 	private HBox uiWrapper = new HBox();
@@ -142,9 +150,9 @@ public class ReplaceUI extends Application {
 		filesBox.setAlignment(Pos.CENTER_LEFT);
 		
 		//for refreshing UI after changing language setting
-		if (this.sourceFile != null) sourceBox.setFile(sourceFile);
-		if (this.translationFile != null) translationBox.setFile(translationFile);
-		if (this.outputFile != null) this.txtSaveFile.setText(outputFile.getName());
+		if (this.sourcePath != null) sourceBox.setPath(sourcePath);
+		if (this.translationPath != null) translationBox.setPath(translationPath);
+		if (this.outputPath != null) this.txtSaveFile.setText(outputPath.toString());
 		if (this.log != "") this.txtLog.setText(this.log);
 		
 		LinesIndex.setLogOutputListener(new LogInterface() {
@@ -164,11 +172,11 @@ public class ReplaceUI extends Application {
 		//3. parent, listening for child
 		sourceBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
 			@Override
-			public void onFileOpened(File file) {
-				sourceFile = file;
+			public void onFileOpened(Path path) {
+				sourcePath = path;
 				
 				//getting filename of source to generate output file's name
-				String sourceFull = sourceFile.toPath().toString();
+				String sourceFull = sourcePath.toString();
 				String[] filenameArray = getFileNameAndExtension(sourceFull);
 				
 				String name = filenameArray[0];
@@ -176,17 +184,17 @@ public class ReplaceUI extends Application {
 				
 				//try to append date
 				String date = LocalDate.now().toString();
-				outputFile = new File(name + " " + date + extension);
-				if (outputFile.exists()){
+				outputPath = Paths.get(name + " " + date + extension);
+				if (Files.exists(outputPath)){
 					//but if it exists, append date + N
 					int i = 1;
-					while (outputFile.exists()) {
-						outputFile = new File(name + " " + date + " " + i + extension);
+					while (Files.exists(outputPath)) {
+						outputPath = Paths.get(name + " " + date + i + extension);
 						i++;
 					}
 				}
 
-				txtSaveFile.setText(outputFile.getName());
+				txtSaveFile.setText(outputPath.toString());
 			}
 
 			@Override
@@ -197,8 +205,8 @@ public class ReplaceUI extends Application {
 		
 		translationBox.setFileOpenedListener(new FileBox.FileOpenedInterface() {
 			@Override
-			public void onFileOpened(File file) {
-				translationFile = file;
+			public void onFileOpened(Path path) {
+				translationPath = path;
 			}
 
 			@Override
@@ -210,19 +218,19 @@ public class ReplaceUI extends Application {
 		
 		btnStart.setOnAction(e -> {
 			//check if all files have been specified
-			if (sourceFile == null) {
+			if (sourcePath == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_source"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
-			else if (translationFile == null) {
+			else if (translationPath == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setHeaderText(getMessage("ReplaceUI.btnStart.specify_search"));
 				alert.setTitle("");
 				alert.showAndWait().ifPresent(response -> {});
 			}
-			else if (outputFile == null) {
+			else if (outputPath == null) {
 				//this shouldn't happen
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setHeaderText(getMessage("ReplaceUI.btnStart.cannot_output"));
@@ -308,21 +316,22 @@ public class ReplaceUI extends Application {
 		this.replaceLI = new LinesIndex();
 		this.sourceLI = new LinesIndex();
 		this.itemDI = new ItemDescIndex();
+		this.encodingUsed = null;
 
 		//open the 2 files
-		if (!this.sourceFile.exists() || this.sourceFile == null){
+		if (!Files.exists(this.sourcePath) || this.sourcePath == null){
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.source_does_not_exist", 
-					new Object[] {this.sourceFile.getName()}));
+					new Object[] {this.sourcePath.toString()}));
 			return false;
 		}
-		else if (!this.translationFile.exists()) {
+		else if (!Files.exists(this.translationPath)) {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.search_does_not_exist", 
-					new Object[] {this.translationFile.getName()}));
+					new Object[] {this.translationPath.toString()}));
 			return false;
 		}
 				
 		try {
-			Files.copy(this.sourceFile.toPath(), this.outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(this.sourcePath, this.outputPath, StandardCopyOption.REPLACE_EXISTING);
 		}
 		catch (Exception e) {
 			logOutput(e.getMessage());
@@ -333,8 +342,23 @@ public class ReplaceUI extends Application {
 		try {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
-			Scanner searchLinesScanner = new Scanner(this.translationFile);//"windows-31j"
-
+			//set encoding used
+			//TODO
+			List<String> translationTempList;
+			for (String tryEncoding : supportedEncodings) {
+				try {
+					translationTempList.clear();
+					translationTempList = Files.readAllLines(this.sourcePath, Charset.forName(tryEncoding));
+					this.encodingUsed = tryEncoding;
+					break;
+				}
+				catch(IOException ioe) {
+					this.encodingUsed = null;
+				}
+			}
+			
+			Scanner searchLinesScanner = new Scanner(this.translationPath);//"windows-31j"
+			ListIterator tlTempListIter = translationTempList.listIterator();
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;
 			int maxCols = 0;
@@ -355,12 +379,13 @@ public class ReplaceUI extends Application {
 			searchLinesScanner.close();
 			
 			//if translation file is empty
-			if (tempLL.size() == 0 && this.translationFile.length() == 0) {
+			if (tempLL.size() == 0 && Files.size(this.translationPath) == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_file_empty")));
 				return false;
 			}
-			else if (tempLL.size() == 0 && this.translationFile.length() != 0) {
-				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_encode_read_error", new Object[] {this.translationFile.length()})));
+			else if (tempLL.size() == 0 && Files.size(this.translationPath) != 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_encode_read_error", new Object[] {
+						Files.size(this.translationPath)})));
 				return false;
 			}
 			
@@ -397,17 +422,17 @@ public class ReplaceUI extends Application {
 			}
 
 			//parse source file
-			Scanner sourceScanner = new Scanner(sourceFile);
+			Scanner sourceScanner = new Scanner(sourcePath);
 			while (sourceScanner.hasNext()) {
 				sourceLI.add(sourceScanner.nextLine());
 			}
 			sourceScanner.close();
-			if (sourceLI.getSize() == 0 && this.sourceFile.length() == 0) {
+			if (sourceLI.getSize() == 0 && this.sourcePath.length() == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_file_empty")));
 				return false;
 			}
-			else if (sourceLI.getSize() == 0 && this.sourceFile.length() != 0) {
-				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_encode_read_error", new Object[] {this.sourceFile.length()})));
+			else if (sourceLI.getSize() == 0 && this.sourcePath.length() != 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_encode_read_error", new Object[] {this.sourcePath.length()})));
 				return false;
 			}
 			
@@ -423,7 +448,7 @@ public class ReplaceUI extends Application {
 	//output to file
 	public boolean outputSource() {
 		try {
-			PrintWriter printWriter = new PrintWriter(this.outputFile);
+			PrintWriter printWriter = new PrintWriter(this.outputPath);
 			boolean firstLine = true;
 			ListIterator<Line> sourceIter = this.sourceLI.listIterator();
 			while (sourceIter.hasNext()) {

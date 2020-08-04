@@ -1,6 +1,7 @@
 package replaceTextLoop;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javafx.geometry.Insets;
@@ -26,7 +27,7 @@ class FileBox extends HBox{
 	private Button btnOpen = new Button(ReplaceUI.getMessage("FileBox.open"));
 	private FileChooser fileChooser = new FileChooser();	
 	
-	public File file;
+	public Path path;
 	
 	public FileBox(String strInstructions, Stage stage){
 		txtInstruction.setText(strInstructions);
@@ -39,25 +40,21 @@ class FileBox extends HBox{
 		
 		btnOpen.setOnAction(e-> {
 			fileChooser.setInitialDirectory(new File(Paths.get(".").toAbsolutePath().normalize().toString()));
-			file = fileChooser.showOpenDialog(stage);
-			if (file != null) {
-				txtFile.setText(file.getName());
-				//4. trigger listener
-				listener.onFileOpened(file);
-			}
+			setPath(fileChooser.showOpenDialog(stage).getAbsoluteFile().toPath());
 		});
 	}
 	
-	public void setFile(File newFile) {
-		this.file = newFile;
-		if (file != null) {
-			txtFile.setText(file.getName());
+	public void setPath(Path newPath) {
+		this.path = newPath;
+		if (this.path != null) {
+			txtFile.setText(path.getFileName().toString());
+			listener.onFileOpened(path);
 		}
 	}
 	
 	//1. interface with methods that will be fired in parent
 	public interface FileOpenedInterface{
-		public void onFileOpened(File file);
+		public void onFileOpened(Path path);
 		
 		public void onLogOutput(String msg);
 	}
