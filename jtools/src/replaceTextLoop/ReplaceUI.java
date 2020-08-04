@@ -416,6 +416,7 @@ public class ReplaceUI extends Application {
 				}
 			}
 
+			//TODO use Files.read?
 			//parse source file
 			Scanner sourceScanner = new Scanner(sourcePath);
 			while (sourceScanner.hasNext()) {
