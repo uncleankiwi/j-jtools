@@ -341,8 +341,7 @@ public class ReplaceUI extends Application {
 		try {
 			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.checking_files"));
 			
-			//set encoding used
-			//TODO
+			//detecting encoding used in translation file
 			List<String> translationTempList = null;
 			for (String tryEncoding : supportedEncodings) {
 				try {
