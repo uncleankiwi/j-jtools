@@ -1,12 +1,13 @@
 package replaceTextLoop;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
 
 //a collection of Line objects. equivalent to the entire source code text file, or a search/replace text file.
 //non-lang() searches and replacements are NOT these
-public class LinesIndex {
+public class LinesIndex implements Iterable<String> {
 	private LinkedList<Line> LI = new LinkedList<Line>();
 	private static LogInterface logListener;
 	
@@ -163,5 +164,24 @@ public class LinesIndex {
 			
 		}	
 	}
+
+	@Override
+	public Iterator<String> iterator() {
+		return new Iterator<String>(){
+			private final ListIterator<Line> iter = listIterator();
+
+			@Override
+			public boolean hasNext() {
+				return this.iter.hasNext();
+			}
+
+			@Override
+			public String next() {
+				return this.iter.next().toString();
+			}
+			
+		};
+	}
 	
 }
+

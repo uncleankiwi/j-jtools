@@ -1,8 +1,6 @@
 package replaceTextLoop;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,7 +64,8 @@ public class ReplaceUI extends Application {
 	private static Locale currentLocale = jaLocale;
 	
 	private static String[] supportedEncodings = {"windows-31j", "UTF-8", "Shift_JIS"};
-	private String encodingUsed = null;
+	private String translationEncodingUsed = null;
+	private String sourceEncodingUsed = null;
 
 	private VBox uiWrapWrapper = new VBox();
 	private HBox uiWrapper = new HBox();
@@ -316,7 +315,7 @@ public class ReplaceUI extends Application {
 		this.replaceLI = new LinesIndex();
 		this.sourceLI = new LinesIndex();
 		this.itemDI = new ItemDescIndex();
-		this.encodingUsed = null;
+		this.translationEncodingUsed = null;
 
 		//open the 2 files
 		if (!Files.exists(this.sourcePath) || this.sourcePath == null){
@@ -344,28 +343,26 @@ public class ReplaceUI extends Application {
 			
 			//set encoding used
 			//TODO
-			List<String> translationTempList;
+			List<String> translationTempList = null;
 			for (String tryEncoding : supportedEncodings) {
 				try {
-					translationTempList.clear();
 					translationTempList = Files.readAllLines(this.sourcePath, Charset.forName(tryEncoding));
-					this.encodingUsed = tryEncoding;
+					this.translationEncodingUsed = tryEncoding;
 					break;
 				}
 				catch(IOException ioe) {
-					this.encodingUsed = null;
+					this.translationEncodingUsed = null;
 				}
 			}
 			
-			Scanner searchLinesScanner = new Scanner(this.translationPath);//"windows-31j"
-			ListIterator tlTempListIter = translationTempList.listIterator();
+			ListIterator<String> tlTempListIter = translationTempList.listIterator();
 			LinkedList<LinkedList<String>> tempLL = new LinkedList<LinkedList<String>>();
 			int minCols = 0;
 			int maxCols = 0;
 			
 			//separating tsv values
-			while (searchLinesScanner.hasNext()) {
-				String[] stringsArrToAdd = searchLinesScanner.nextLine().split("\t");
+			while (tlTempListIter.hasNext()) {
+				String[] stringsArrToAdd = tlTempListIter.next().split("\t");
 				LinkedList<String> tempRow = new LinkedList<String>();
 				int rowCount = 0;
 				for (String str : stringsArrToAdd) {
@@ -376,7 +373,6 @@ public class ReplaceUI extends Application {
 				if (minCols == 0 || rowCount < minCols) minCols = rowCount;
 				if (rowCount > maxCols) maxCols = rowCount;
 			}
-			searchLinesScanner.close();
 			
 			//if translation file is empty
 			if (tempLL.size() == 0 && Files.size(this.translationPath) == 0) {
@@ -427,16 +423,19 @@ public class ReplaceUI extends Application {
 				sourceLI.add(sourceScanner.nextLine());
 			}
 			sourceScanner.close();
-			if (sourceLI.getSize() == 0 && this.sourcePath.length() == 0) {
+			if (sourceLI.getSize() == 0 && Files.size(this.sourcePath) == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_file_empty")));
 				return false;
 			}
-			else if (sourceLI.getSize() == 0 && this.sourcePath.length() != 0) {
-				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_encode_read_error", new Object[] {this.sourcePath.length()})));
+			else if (sourceLI.getSize() == 0 && Files.size(this.sourcePath) != 0) {
+				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_encode_read_error", 
+						new Object[] {Files.size(this.sourcePath)})));
 				return false;
 			}
 			
-			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked", new Object[] {this.mode.toString()}));
+			logOutput(ReplaceUI.getMessage("ReplaceUI.fileCheck.files_checked", 
+					new Object[] {this.mode.toString(), this.sourceEncodingUsed, this.translationEncodingUsed}));
+			//Files checked. Current mode: {0}. Source file encoding: {1}. Translation encoding: {2}
 			return true;
 		} catch (Exception e) {
 			logOutput(e.toString());
@@ -448,21 +447,10 @@ public class ReplaceUI extends Application {
 	//output to file
 	public boolean outputSource() {
 		try {
-			PrintWriter printWriter = new PrintWriter(this.outputPath);
-			boolean firstLine = true;
-			ListIterator<Line> sourceIter = this.sourceLI.listIterator();
-			while (sourceIter.hasNext()) {
-				if (firstLine) {
-					firstLine = false;
-				}
-				else {
-					printWriter.append("\n");
-				}
-				printWriter.append(sourceIter.next().getRaw());
-			}
-			printWriter.close();
-			
-			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource.end_replacement"));
+			Files.write(this.outputPath, this.sourceLI, Charset.forName(this.sourceEncodingUsed));
+						
+			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource.end_replacement", new Object[] {this.sourceEncodingUsed}));
+			//---Replacement done. Output encoding: {0}---
 			return true;
 		} catch (Exception e) {
 			logOutput(e.getMessage());
