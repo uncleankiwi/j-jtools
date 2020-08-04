@@ -49,6 +49,8 @@ import javafx.stage.Stage;
 //4. trigger child's listener somewhere. In child?
 
 public class ReplaceUI extends Application {
+	public static String version = "1.1";
+	
 	private File sourceFile = null;
 	private File translationFile = null;
 	private File outputFile = null;
@@ -258,7 +260,7 @@ public class ReplaceUI extends Application {
 				
 		Scene scene = new Scene(uiWrapWrapper);
 		pStage.setScene(scene);
-		pStage.setTitle(getMessage("ReplaceUI.UI.window_title"));
+		pStage.setTitle(getMessage("ReplaceUI.UI.window_title", new Object[] {ReplaceUI.version}));
 		pStage.setResizable(false);
 		pStage.show();
 	}
