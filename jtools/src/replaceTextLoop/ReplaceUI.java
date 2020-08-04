@@ -14,7 +14,6 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -416,13 +415,21 @@ public class ReplaceUI extends Application {
 				}
 			}
 
-			//TODO use Files.read?
-			//parse source file
-			Scanner sourceScanner = new Scanner(sourcePath);
-			while (sourceScanner.hasNext()) {
-				sourceLI.add(sourceScanner.nextLine());
+			List<String> sourceTempList = null;
+			for (String tryEncoding : supportedEncodings) {
+				try {
+					sourceTempList = Files.readAllLines(this.sourcePath, Charset.forName(tryEncoding));
+					this.sourceEncodingUsed = tryEncoding;
+					break;
+				}
+				catch(IOException ioe) {
+					this.sourceEncodingUsed = null;
+				}
 			}
-			sourceScanner.close();
+			for (String sourceLine : sourceTempList) {
+				sourceLI.add(sourceLine);
+			}
+			
 			if (sourceLI.getSize() == 0 && Files.size(this.sourcePath) == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_file_empty")));
 				return false;
