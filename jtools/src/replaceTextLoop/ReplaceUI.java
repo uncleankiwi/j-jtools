@@ -50,6 +50,10 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
+//TODO truncate filename of output
+//TODO exception when closing choosefile in filebox
+//TODO incorrect rownum in tl file parsed
+
 public class ReplaceUI extends Application {
 	public static String version = "1.1";
 	
