@@ -52,7 +52,7 @@ import javafx.stage.Stage;
 //4. trigger child's listener somewhere. In child?
 
 public class ReplaceUI extends Application {
-	public static String version = "1.1";
+	public static String version = "1.2";
 	
 	private Path sourcePath = null;
 	private Path translationPath = null;
