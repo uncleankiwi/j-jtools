@@ -54,6 +54,10 @@ class FileBox extends HBox{
 		}
 	}
 	
+	public void enableButton(Boolean enabled) {
+		btnOpen.setDisable(!enabled);
+	}
+	
 	//1. interface with methods that will be fired in parent
 	public interface FileOpenedInterface{
 		public void onFileOpened(Path path);

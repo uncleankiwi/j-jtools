@@ -51,6 +51,9 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
+//TODO make sourcebox and translationbox class level attribute
+//TODO enable, disable fileboxes at start, end of thread operation
+
 public class ReplaceUI extends Application {
 	public static String version = "1.2";
 	
@@ -451,6 +454,9 @@ public class ReplaceUI extends Application {
 
 		@Override
 		protected Void call() throws Exception {
+			
+			//disabling filebox buttons	//TODO
+
 			boolean pass = false;
 			pass = fileCheck();
 			
@@ -474,6 +480,9 @@ public class ReplaceUI extends Application {
 			if (pass) {
 				pass = outputSource();
 			}
+			
+			//reenabling filebox buttons	//TODO
+			
 			return null;
 		}
 		
