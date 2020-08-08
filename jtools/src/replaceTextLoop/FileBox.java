@@ -3,7 +3,6 @@ package replaceTextLoop;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -40,14 +39,17 @@ class FileBox extends HBox{
 		
 		btnOpen.setOnAction(e-> {
 			fileChooser.setInitialDirectory(new File(Paths.get(".").toAbsolutePath().normalize().toString()));
-			setPath(fileChooser.showOpenDialog(stage).getAbsoluteFile().toPath());
+			File tryFile = fileChooser.showOpenDialog(stage);
+			if (tryFile != null) {
+				setPath(tryFile.getAbsoluteFile().toPath());
+			}
 		});
 	}
 	
 	public void setPath(Path newPath) {
 		this.path = newPath;
 		if (this.path != null) {
-			txtFile.setText(path.getFileName().toString());
+			txtFile.setText(path.toString());
 			listener.onFileOpened(path);
 		}
 	}

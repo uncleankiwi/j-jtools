@@ -51,7 +51,6 @@ import javafx.stage.Stage;
 //4. trigger child's listener somewhere. In child?
 
 //TODO truncate filename of output
-//TODO exception when closing choosefile in filebox
 //TODO incorrect rownum in tl file parsed
 
 public class ReplaceUI extends Application {
