@@ -50,8 +50,6 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
-//TODO incorrect rownum in tl file parsed
-
 public class ReplaceUI extends Application {
 	public static String version = "1.1";
 	
@@ -346,7 +344,7 @@ public class ReplaceUI extends Application {
 			List<String> translationTempList = null;
 			for (String tryEncoding : supportedEncodings) {
 				try {
-					translationTempList = Files.readAllLines(this.sourcePath, Charset.forName(tryEncoding));
+					translationTempList = Files.readAllLines(this.translationPath, Charset.forName(tryEncoding));
 					this.translationEncodingUsed = tryEncoding;
 					break;
 				}
@@ -375,11 +373,11 @@ public class ReplaceUI extends Application {
 			}
 			
 			//if translation file is empty
-			if (tempLL.size() == 0 && Files.size(this.translationPath) == 0) {
+			if (tempLL.size() == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_file_empty")));
 				return false;
 			}
-			else if (tempLL.size() == 0 && Files.size(this.translationPath) != 0) {
+			else if (translationEncodingUsed == null) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.translation_encode_read_error", new Object[] {
 						Files.size(this.translationPath)})));
 				return false;
@@ -432,11 +430,11 @@ public class ReplaceUI extends Application {
 				sourceLI.add(sourceLine);
 			}
 			
-			if (sourceLI.getSize() == 0 && Files.size(this.sourcePath) == 0) {
+			if (sourceLI.getSize() == 0) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_file_empty")));
 				return false;
 			}
-			else if (sourceLI.getSize() == 0 && Files.size(this.sourcePath) != 0) {
+			else if (sourceEncodingUsed == null) {
 				logOutput((ReplaceUI.getMessage("ReplaceUI.fileCheck.source_encode_read_error", 
 						new Object[] {Files.size(this.sourcePath)})));
 				return false;
