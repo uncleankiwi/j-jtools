@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -236,30 +237,7 @@ public class ReplaceUI extends Application {
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
-				boolean pass = false;
-				pass = fileCheck();
-				
-				//extension case selection
-				if (pass) {
-					logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement"));
-					
-					if (this.mode == Mode.LANG) {
-						this.sourceLI = LinesIndex.replaceLoop(this.searchLI, this.sourceLI, this.replaceLI);
-					}
-					else if (this.mode == Mode.DESC) {
-						this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, itemDI);
-					}
-					else {
-						pass = false;
-					}
-					
-				}
-				
-				//output to file
-				if (pass) {
-					pass = outputSource();
-				}
-				
+				new Thread(ruiTask).start();
 			}
 			
 		});
@@ -269,6 +247,8 @@ public class ReplaceUI extends Application {
 		pStage.setTitle(getMessage("ReplaceUI.UI.window_title", new Object[] {ReplaceUI.version}));
 		pStage.setResizable(false);
 		pStage.show();
+		
+		
 	}
 	
 	public static void main(String[] args) {
@@ -465,6 +445,39 @@ public class ReplaceUI extends Application {
 		}
 
 	}
+	
+	//main functionality contained in a thread
+	Task<Void> ruiTask = new Task<Void>() {
+
+		@Override
+		protected Void call() throws Exception {
+			boolean pass = false;
+			pass = fileCheck();
+			
+			//extension case selection
+			if (pass) {
+				logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement"));
+				
+				if (ReplaceUI.this.mode == Mode.LANG) {
+					sourceLI = LinesIndex.replaceLoop(ReplaceUI.this.searchLI, ReplaceUI.this.sourceLI, ReplaceUI.this.replaceLI);
+				}
+				else if (ReplaceUI.this.mode == Mode.DESC) {
+					ReplaceUI.this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, itemDI);
+				}
+				else {
+					pass = false;
+				}
+				
+			}
+			
+			//output to file
+			if (pass) {
+				pass = outputSource();
+			}
+			return null;
+		}
+		
+	};
 }
 
 
