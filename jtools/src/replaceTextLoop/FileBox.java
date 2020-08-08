@@ -49,7 +49,7 @@ class FileBox extends HBox{
 	public void setPath(Path newPath) {
 		this.path = newPath;
 		if (this.path != null) {
-			txtFile.setText(path.toString());
+			txtFile.setText(path.getFileName().toString());
 			listener.onFileOpened(path);
 		}
 	}
