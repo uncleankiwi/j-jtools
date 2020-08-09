@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Application;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -50,9 +51,6 @@ import javafx.stage.Stage;
 //2. instantiate interface in child
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
-
-//TODO make sourcebox and translationbox class level attribute
-//TODO enable, disable fileboxes at start, end of thread operation
 
 public class ReplaceUI extends Application {
 	public static String version = "1.2";
@@ -243,7 +241,7 @@ public class ReplaceUI extends Application {
 				alert.showAndWait().ifPresent(response -> {});
 			}
 			else {
-				new Thread(ruiTask).start();
+				ruiService.restart();
 			}
 			
 		});
@@ -456,53 +454,55 @@ public class ReplaceUI extends Application {
 	}
 	
 	//main functionality contained in a thread
-	Task<Void> ruiTask = new Task<Void>() {
-
+	//nb: javafx tasks run once. use services to run them repeatedly
+	Service<Void> ruiService = new Service<Void>() {
 		@Override
-		protected Void call() throws Exception {
-			
-			//disabling buttons
-			ReplaceUI.this.sourceBox.enableButton(false);
-			ReplaceUI.this.translationBox.enableButton(false);
-			ReplaceUI.this.btnStart.setDisable(true);
+		protected Task<Void> createTask() {
+			return new Task<Void>() {
+				@Override
+				protected Void call() throws Exception {
+					//disabling buttons
+					ReplaceUI.this.sourceBox.enableButton(false);
+					ReplaceUI.this.translationBox.enableButton(false);
+					ReplaceUI.this.btnStart.setDisable(true);
 
-			boolean pass = false;
-			pass = fileCheck();
-			
-			//extension case selection
-			if (pass) {
-				logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement", 
-						new Object[] {ReplaceUI.this.sourcePath.getFileName().toString(),
-								ReplaceUI.this.translationPath.getFileName().toString()}));	//TODO
-				//Beginning replacement...
-				//Source file used: {0}
-				//Translation file used: {1}
-				
-				if (ReplaceUI.this.mode == Mode.LANG) {
-					sourceLI = LinesIndex.replaceLoop(ReplaceUI.this.searchLI, ReplaceUI.this.sourceLI, ReplaceUI.this.replaceLI);
-				}
-				else if (ReplaceUI.this.mode == Mode.DESC) {
-					ReplaceUI.this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, itemDI);
-				}
-				else {
-					pass = false;
-				}
-				
-			}
-			
-			//output to file
-			if (pass) {
-				pass = outputSource();
-			}
-			
-			//reenabling buttons
-			ReplaceUI.this.sourceBox.enableButton(true);
-			ReplaceUI.this.translationBox.enableButton(true);
-			ReplaceUI.this.btnStart.setDisable(false);
-			return null;
-		}
-		
-	};
+					boolean pass = false;
+					pass = fileCheck();
+					
+					//extension case selection
+					if (pass) {
+						logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement", 
+								new Object[] {ReplaceUI.this.sourcePath.getFileName().toString(),
+										ReplaceUI.this.translationPath.getFileName().toString()}));
+						//Beginning replacement...
+						//Source file used: {0}
+						//Translation file used: {1}
+						
+						if (ReplaceUI.this.mode == Mode.LANG) {
+							sourceLI = LinesIndex.replaceLoop(ReplaceUI.this.searchLI, ReplaceUI.this.sourceLI, ReplaceUI.this.replaceLI);
+						}
+						else if (ReplaceUI.this.mode == Mode.DESC) {
+							ReplaceUI.this.sourceLI = ItemDescIndex.replaceLoop(sourceLI, itemDI);
+						}
+						else {
+							pass = false;
+						}
+						
+					}
+					
+					//output to file
+					if (pass) {
+						pass = outputSource();
+					}
+					
+					//reenabling buttons
+					ReplaceUI.this.sourceBox.enableButton(true);
+					ReplaceUI.this.translationBox.enableButton(true);
+					ReplaceUI.this.btnStart.setDisable(false);
+					return null;
+				}};
+		}};
+
 }
 
 
