@@ -442,8 +442,11 @@ public class ReplaceUI extends Application {
 		try {
 			Files.write(this.outputPath, this.sourceLI, Charset.forName(this.sourceEncodingUsed));
 						
-			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource.end_replacement", new Object[] {this.sourceEncodingUsed}));
-			//---Replacement done. Output encoding: {0}---
+			logOutput(ReplaceUI.getMessage("ReplaceUI.outputSource.end_replacement", 
+					new Object[] {this.outputPath.getFileName().toString(), this.sourceEncodingUsed}));
+			//Output file: {0}
+			//Output encoding: {1}
+			//---Replacement done.---
 			return true;
 		} catch (Exception e) {
 			logOutput(e.getMessage());
@@ -468,7 +471,12 @@ public class ReplaceUI extends Application {
 			
 			//extension case selection
 			if (pass) {
-				logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement"));
+				logOutput(ReplaceUI.getMessage("ReplaceUI.btnStart.begin_replacement", 
+						new Object[] {ReplaceUI.this.sourcePath.getFileName().toString(),
+								ReplaceUI.this.translationPath.getFileName().toString()}));	//TODO
+				//Beginning replacement...
+				//Source file used: {0}
+				//Translation file used: {1}
 				
 				if (ReplaceUI.this.mode == Mode.LANG) {
 					sourceLI = LinesIndex.replaceLoop(ReplaceUI.this.searchLI, ReplaceUI.this.sourceLI, ReplaceUI.this.replaceLI);
