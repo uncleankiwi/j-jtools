@@ -86,6 +86,9 @@ public class ReplaceUI extends Application {
 	private LinesIndex sourceLI = new LinesIndex();
 	private ItemDescIndex itemDI = new ItemDescIndex();	//first item is used to search, other items for replacing
 	
+	private FileBox sourceBox;
+	private FileBox translationBox;
+	
 	//both modes use fileCheck and put the source into a LinesIndex
 	//differences:
 	//LANG replaces lang() in source.
@@ -137,8 +140,8 @@ public class ReplaceUI extends Application {
 		txtLog.setMinSize(480, 300);
 		txtLog.setStyle("-fx-border-color: black;");
 		
-		FileBox sourceBox = new FileBox(getMessage("ReplaceUI.UI.source_file"), pStage);
-		FileBox translationBox = new FileBox(getMessage("ReplaceUI.UI.translation_file"), pStage);
+		sourceBox = new FileBox(getMessage("ReplaceUI.UI.source_file"), pStage);
+		translationBox = new FileBox(getMessage("ReplaceUI.UI.translation_file"), pStage);
 
 		uiWrapper.setPadding(new Insets(5));
 		uiWrapper.getChildren().addAll(txtLog, filesBox);
@@ -455,7 +458,10 @@ public class ReplaceUI extends Application {
 		@Override
 		protected Void call() throws Exception {
 			
-			//disabling filebox buttons	//TODO
+			//disabling buttons
+			ReplaceUI.this.sourceBox.enableButton(false);
+			ReplaceUI.this.translationBox.enableButton(false);
+			ReplaceUI.this.btnStart.setDisable(true);
 
 			boolean pass = false;
 			pass = fileCheck();
@@ -481,8 +487,10 @@ public class ReplaceUI extends Application {
 				pass = outputSource();
 			}
 			
-			//reenabling filebox buttons	//TODO
-			
+			//reenabling buttons
+			ReplaceUI.this.sourceBox.enableButton(true);
+			ReplaceUI.this.translationBox.enableButton(true);
+			ReplaceUI.this.btnStart.setDisable(false);
 			return null;
 		}
 		

@@ -27,7 +27,7 @@ class FileBox extends HBox{
 	private FileChooser fileChooser = new FileChooser();	
 	
 	public Path path;
-	
+		
 	public FileBox(String strInstructions, Stage stage){
 		txtInstruction.setText(strInstructions);
 		txtFile.setMinWidth(200);
