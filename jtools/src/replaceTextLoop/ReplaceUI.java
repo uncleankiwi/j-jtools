@@ -52,6 +52,9 @@ import javafx.stage.Stage;
 //3. for each child in parent, assign them an interface instance and implement listener callback (parent's reaction)
 //4. trigger child's listener somewhere. In child?
 
+//TODO fix replacing entire line with line
+//TODO test itemdesc replacement to see if tabs preserved
+
 public class ReplaceUI extends Application {
 	public static String version = "1.2";
 	
@@ -192,7 +195,7 @@ public class ReplaceUI extends Application {
 					//but if it exists, append date + N
 					int i = 1;
 					while (Files.exists(outputPath)) {
-						outputPath = Paths.get(name + " " + date + i + extension);
+						outputPath = Paths.get(name + " " + date + " " + i + extension);
 						i++;
 					}
 				}

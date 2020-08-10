@@ -177,7 +177,7 @@ public class LinesIndex implements Iterable<String> {
 
 			@Override
 			public String next() {
-				return this.iter.next().toString();
+				return this.iter.next().getRaw();
 			}
 			
 		};
