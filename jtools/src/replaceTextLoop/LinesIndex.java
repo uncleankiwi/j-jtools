@@ -86,8 +86,7 @@ public class LinesIndex implements Iterable<String> {
 					
 		 			//replace SOURCEINDEX line's lang with REPLACEINDEX line
 					if (pass) {
-						sourceLine.setRaw(replaceLine.getRaw());
-						sourceLine.setQuotes(replaceLine);
+						sourceLine.replaceLangPart(replaceLine);
 						found = true;
 						totalReplacedCount++;
 					}

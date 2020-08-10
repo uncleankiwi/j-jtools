@@ -13,6 +13,7 @@ public class Line {
 	private String rawtext = "";
 	
 	//for lang()
+	private String sourceLangPart = "";
 	private LinkedList<String> quoteList = new LinkedList<String>();
 	private LinkedList<String> varList = new LinkedList<String>();
 	private int quoteCount;
@@ -72,16 +73,15 @@ public class Line {
 		//get contents of lang()
 		Pattern pattern = Pattern.compile("lang\\(.*\\)");
 		Matcher matcher = pattern.matcher(this.rawtext);
-		String sourceLangPart = "";
 		if (matcher.find()) {
-			sourceLangPart = matcher.group();
+			this.sourceLangPart = matcher.group();
 		}
 		else {
 			return false;
 		}
 		
 		//remove spaces in both 
-		String sourceNoSpaces = sourceLangPart.replace(" ", "");
+		String sourceNoSpaces = this.sourceLangPart.replace(" ", "");
 		String searchNoSpaces = searchLine.getRaw().replace(" ", "");
 				
 		//substring with vars
@@ -156,6 +156,11 @@ public class Line {
 		}
 		
 		return true;
+	}
+	
+	public void replaceLangPart(Line replaceLine) {
+		this.setRaw(this.rawtext.replace(this.sourceLangPart, replaceLine.getRaw()));
+		this.setQuotes(replaceLine);
 	}
 	
 	public int quoteCount() {
