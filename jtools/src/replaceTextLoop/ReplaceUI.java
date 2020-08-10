@@ -502,8 +502,6 @@ public class ReplaceUI extends Application {
 					ReplaceUI.this.sourceBox.enableButton(true);
 					ReplaceUI.this.translationBox.enableButton(true);
 					ReplaceUI.this.btnStart.setDisable(false);
-					
-					System.out.println("task run");//TODO
 					return null;
 				}};
 		}};

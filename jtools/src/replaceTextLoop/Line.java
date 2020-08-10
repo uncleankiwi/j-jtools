@@ -66,11 +66,7 @@ public class Line {
 	
 	//find and populate the list of variables in a line of source code, given an indexed search line
 	public boolean indexUnknownVars(Line searchLine) {
-		this.varCount = 0;
-		//no vars to get in this line
-		if (searchLine.varCount == 0) return true;
-		
-		//get contents of lang()
+		//get contents of lang(), if any
 		Pattern pattern = Pattern.compile("lang\\(.*\\)");
 		Matcher matcher = pattern.matcher(this.rawtext);
 		if (matcher.find()) {
@@ -79,6 +75,10 @@ public class Line {
 		else {
 			return false;
 		}
+		
+		this.varCount = 0;
+		//no vars to get in this line, so skip everything
+		if (searchLine.varCount == 0) return true;
 		
 		//remove spaces in both 
 		String sourceNoSpaces = this.sourceLangPart.replace(" ", "");
@@ -159,8 +159,10 @@ public class Line {
 	}
 	
 	public void replaceLangPart(Line replaceLine) {
-		this.setRaw(this.rawtext.replace(this.sourceLangPart, replaceLine.getRaw()));
-		this.setQuotes(replaceLine);
+		if (this.sourceLangPart != "") {
+			this.setRaw(this.rawtext.replace(this.sourceLangPart, replaceLine.getRaw()));
+			this.setQuotes(replaceLine);
+		}
 	}
 	
 	public int quoteCount() {
