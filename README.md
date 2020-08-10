@@ -1,5 +1,6 @@
 # j-jtools:Eplus用翻訳差し替えツール
-![ss](https://i.imgur.com/PYIxSZs.png)
+![ss](https://i.imgur.com/sPtqksb.png)
+
 ## 使い方
 1. EplusReplace.jarをダブルクリックして実行する  
 2. ソースコードを開く
